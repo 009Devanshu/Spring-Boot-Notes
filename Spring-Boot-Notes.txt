@@ -1,0 +1,215 @@
+Setting up New Spring Boot Project with Spring Initializer
+===============================================================================================
+Spring Initializer---- start.spring.io
+Build Tool------ Maven (Other Build Tool available are Gradle-Groovy and Gradle-Kotlin)
+Language-----Java
+
+Spring Boot Version
+--------------------------
+There are three types of versions
+SNAPSHOT version
+Milestone version
+Released version
+If you see higher version that is milestone version, you can choose it. For example, if there is 3.0.0 (M) and 2.0.3, you can choose 3.0.0(M). Do not use snapshot versions, SNAPSHOT versions are under development.
+
+Project Metadata
+---------------------------
+Group Id and ArtifactId are very similar to package name and class name.When we create an object, we place it in package. Similarly, we create project with name which is artifactId and place that name in GroupId.
+Name----- artifactId and name are by default same.
+Description
+Package Name --groupId-artifactId
+Packaging---- jar or war
+Java Version
+
+Dependencies
+--------------------
+
+
+Important Goals of Spring Boot
+=======================================================================================
+Build Quickly
+------------------------
+Spring Initializer
+
+
+Spring Boot starter projects
+==>Spring Boot starters are dependency descriptors that can be added under <dependencies> section in pom.xml file. These starters give all the dependencies under  a single name. For example, if we want to use Spring Data Jpa to access database, we can include starter project spring-boot-starter-jpa.
+>Web application and Rest Api-- spring-boot-starter-web(spring-webmvc,spring-web,spring-boot-starter-tomcat,spring-boot-starter-json)
+>Unit Test --------------------- spring-boot-starter-test
+>Talk to database using Jpa----------------- spring-boot-starter-jpa
+>Talk to database using JDBC---------------- spring-boot-starter-jdbc
+>Secure your web-application or rest api------------------spring-boot-starter-security
+
+
+
+Spring Boot Auto Configuration
+-----------------------------------
+>We need a lot of configuration to build spring app
+ComponentScan, DispatcherServlet, DataSources, JSON conversion etc...
+Spring Boot provides autoconfiguration. Autoconfiguration is decided on the basis of which frameworks are in the class path? We can also override the default configuration. So, auto configuration also can be a combination of autoconfiguration as well as our own configuration.
+>We can see all the jars related to autoconfiguration under spring-boot-autoconfigure.jar in MavenDependencies
+>To go ahead with this autoconfiguration, we can use debug logging at the level org.springframework
+loggin.level.org.springframework=debug (Default logging level is INFO, defug provides more information)
+This will give 'Conditions Evaluation Report', in this report, we can see Positive Matches and Negative Matches. Positive Matches are those which are auto configured. Negative matches are those which are not auto-configured.
+Example: 
+spring-boot-starter-web
+	DispatcherServlet(DispatcherServletAutoConfiguration)
+	Embedded Servlet Container - Tomcat is the default
+		(EmbeddedWebServerFactoryCustomizerAutoConfiguration)
+	Default Error Page(ErrorMvcAutoConfiguration)
+	Bean<-->JSON
+		(JacksonHttpMessageConvertersConfiguration)
+
+
+	Spring Boot auto configuration would automatically provide configuration based on the dependecies which are in the 	class path.
+
+
+
+
+Spring Boot Dev Tools
+>Restart is automatically triggered.
+Remember: We need to restart the application if we add a dependency in pom.xml file.
+
+
+
+
+
+
+
+
+
+Be Production Ready
+---------------------------------------------------------------------------------
+Application has different environments: Dev, QA, Stage, Prod...
+Different Environments need different configurations:
+	>Different databases
+	>Different webservices
+How can you provide different configuration for different environments?
+Profiles: Environment specific configuration
+
+
+Suppose we want configurations for dev and prod, and provide logging levels of trace for dev and info for prod.
+We add application-dev.properties and application-prod.properties in src/main/resources. 
+>application.properties
+	logging.level.org.springframework=debug
+>application-dev.properties
+	logging.level.org.springframework=trace
+>application-prod.properties
+	logging.level.org.springframework=info
+
+It will run the application, the application will run at debug level which is specified in application.properties. Since, the application is not using any profile.
+But, if we add spring.profiles.active = dev or spring.profiles.active=prod. The priority will be given to trace or info according to the active profile.
+Ex--
+	application.properties
+		logging.level.org.springframework=debug
+		spring.profiles.active = dev
+	Then, trace will be given higher priority over debug.
+
+	
+
+Different levels of logging
+---------------------------
+trace
+debug
+info
+warning
+error
+off
+ 
+But, suppose you have to create lots of configuration for your application, you would need ConfigurationProperties
+(Note: To format the code, ctrl+shift+F)(See learn-spring-boot)
+
+
+
+Get Production Ready:Deployment with Spring Boot Embedded Servers
+-----------------------------------------------------
+Right Click on application>>Run as Maven Build>>(in 'Goals') clean install>> Run
+copy Something like this
+ F:\Java_Ultimate\Spring-Boot-Project\MyProjects\learn-spring-boot\learn-spring-boot\target\learn-spring-boot-0.0.1-SNAPSHOT.jar from console
+Open cmd> cd  F:\Java_Ultimate\Spring-Boot-Project\MyProjects\learn-spring-boot\learn-spring-boot\target
+dir
+java -jar  learn-spring-boot-0.0.1-SNAPSHOT.jar
+Now, you can use the application
+
+
+Get Production Ready:Monitor application using Spring Boot Actuator
+----------------------------------------------------------------------
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+localhost:8080/actuator
+(By Default only health endpoint is exposed)
+If you want to expose more endpoints of actuator, we can enable them from application.properties
+management.endpoints.web.exposure.include=*    (Will expose all the endpoints)
+
+/actuator/health
+/actuator/info
+/actuator/beans
+
+/actuator/configprops   (You will see all the things that you can configure from application.properties)
+For Example, ctrl+F---->  CurrencyServiceConfiguration (You will see all the details)
+
+/actuator/env  
+It shows all the details related to environment like port 8080, version Java 17, encoding UTF-8,
+
+/actuator/metrics
+Example-- http.server.requests
+
+name": "http.server.requests",
+"baseUnit": "seconds",
+"measurements": [
+{
+"statistic": "COUNT",
+"value": 4    <<------------- It shows the number of requests that are coming into our application. We can see it is 					increasing by refreshing url localhost/8080/actuator 
+},
+{
+"statistic": "TOTAL_TIME",
+"value": 0.4271087
+},
+{
+"statistic": "MAX",
+"value": 0.0173838
+}
+
+We can enable only specific endpoints only
+management.endpoints.web.exposure.include=health,metrics
+
+
+================================================================================================================
+Spring Boot vs Spring vs Spring MVC
+Spring Framework- It is all about dependency injection
+@Componenet(Define dependency),@Autowired(Inject dependecies),@ComponentScan (Identify dependency) etc...
+Just dependency injection is not sufficient. (We need other frameworks to build application)
+		-Spring modules and spring projects - Extend Spring Eco System
+		Provide good integration with other frameworks(Hibernate/Jpa, JUNIT and Mockito for unit testing)
+Spring MVC (Spring Module) - Simplify building Web apps and Rest api.
+		-@Controller, @RestController, @RequestMapping("/courses")
+
+Spring Boot (Spring Project) -  Build production ready application Quickly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

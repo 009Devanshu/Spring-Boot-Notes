@@ -1,0 +1,39 @@
+Method 1:
+-----------------
+Step1: netstat -ao
+Step2: Locate the port on which Tomcat server is running.
+Step3: Locate PID and kill the task
+       taskkill /F /PID 14836       (14836 is PID)
+
+Method 1A:
+----------------
+Finding the process ID associated with the application can be automated or programmed using ApplicationPidFileWriter.
+ 	SpringApplication springBootapplication = new SpringApplication(SpringBootApplicationName.class);  
+        springBootapplication.addListeners(new ApplicationPidFileWriter("sbshutdownwin.pid"));  
+ 	springBootapplication.run();  
+PID will be written in the file sbshutdownwin.pid which is in our current working directory from which our application is launched.
+Now, the same process as above mentioned.
+
+
+Method 2
+--------------
+Shutdown using Actuator endpoint
+
+Step1:
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+Step2:
+management.endpoint.shutdown.enabled = true
+
+Step3:
+invoke the actuator endpoint /shutdown via a [POST] request only
+http://localhost:8080/application-context/actuator/shutdown     
+Here, application-context is nothing but name of the application which can be defined in application.properties 
+spring.application.name="spring-boot-application"
+
+
+
+

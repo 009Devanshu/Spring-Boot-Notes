@@ -1,0 +1,1324 @@
+
+Dependencies Added -- web and devtools
+
+@Controller
+public class SayHelloController {
+
+	@RequestMapping("say-hello")
+	public String sayHello() {
+		return "Hello! what are you learning today?";
+	}
+}
+
+It will give error. When we are returning a String. Spring MVC will look something called view which it will not find. So we will have to add another annotation 
+that is @ResponseBody.
+
+@Controller
+public class SayHelloController {
+
+	@RequestMapping("say-hello")
+  @ResponseBody
+	public String sayHello() {
+		return "Hello! what are you learning today?";
+	}
+}
+Now, whatever the String we are returning here will be sent back to browser.
+--------------------------------------------------------------------------------
+
+Enhancing Spring MVC Controller to provide HTML Response
+@RequestMapping("say-hello-html")
+	@ResponseBody
+	public String sayHelloHtml() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>");
+		sb.append("  <head>");
+		sb.append("<title>My First HTML Page</title>");
+		sb.append(" </head>");
+		sb.append("<body>");
+		sb.append(" My first HTML Page with body.");
+		sb.append(" </body>");
+		sb.append("</html>");
+		return sb.toString();
+  }
+This approach of using HTML is not good when there are large number of HTML lines. That's why when we are building web applications, we go for view. One of the most 
+popular view technologies is JSP.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+One of the most popular view technologies is JSP.
+
+//"say-hello-jsp"---> sayHello.jsp
+Typically all the JSPs should be created in this specific folder--
+/src/main/resources/META-INF/resources/WEB-INF/jsp/sayHello.jsp
+
+Note: Sometimes JSP is not supported in Spring Tool Suite. help>>eclipse marketplace>Search "Eclipse Enterprise Java and Web Developer Tools 3.31" 
+
+We also need to write prefix and suffix in application.properties
+spring.mvc.view.prefix=src/main/resources/META-INF/resources/WEB-INF/jsp/
+spring.mvc.view.suffix=.jsp
+
+@RequestMapping("say-hello-jsp")
+  @ResponseBody
+	public String sayHelloJsp() {
+		return "sayHello";
+	}
+
+Note: spring mvc already knows upto src/main/resources/META-INF/resources, so we can ignore that part. We also can write--
+spring.mvc.view.prefix=/WEB-INF/jsp/
+spring.mvc.view.suffix=.jsp
+
+If you run the application and send url say-hello-jsp, it will give sayHello. It is due the presence of @ResponseBody which returns the String directly back.
+@RequestMapping("say-hello-jsp")
+	public String sayHelloJsp() {
+		return "sayHello";
+}
+
+
+When you send url http://localhost:8080/say-hello-jsp, you will get 404 error,
+To know issue, use logs
+logging.level.org.springframework=debug
+(We can see the  Request is going to the method but Resource could not find, The reason is that a jar is missing)
+
+We will have to add Dependency
+For eclipse--
+<dependency>
+	<groupId>org.apache.tomcat.embed</groupId>
+	<artifactId>tomcat-embed-jasper</artifactId>
+	<scope>provided</scope>
+</dependency>
+
+For Intellij--
+<dependency>
+	<groupId>org.apache.tomcat.embed</groupId>
+	<artifactId>tomcat-embed-jasper</artifactId>
+</dependency>
+
+
+---------------------------------------------------------------------------------------------------------------
+
+
+
+Step 06-Exercise : Creating LoginController and login view
+-----------------------------------------------------------------------
+
+Step 07- Quick Overview- How does web work - Request and Response
+
+Hit any url
+Inspect web page >> Network >> doc >> click your url --- You will see lots of information about request like url, port number, method type, http status
+
+How does web work?
+A. A browser sends the request
+	> HttpRequest
+B. Server handles the request
+	> Our SpringBootApplication
+C. Server returns the Response
+	> HttpResponse
+-----------------------------------------------------------------------------------------------------------------
+
+
+
+Step 08- Capturing QueryParams using RequestParam and First Look at model
+----------------------------------------------------------------------------
+http://localhost:8080/login?name=Ranga
+ 
+@RequestMapping("/login")
+public String gotoLoginPage(@Request(here you can press ctrl+space, It will give options))
+{
+	return "login";
+}
+
+@RequestMapping("/login")
+public String gotoLoginPage(@RequestParam String name)
+{
+ return "login";
+}
+
+Note: name in (String name) and name in (/login?name=Ranga) should be same to bind the data.
+@RequestMapping("login")
+	public String gotoLoginPage(@RequestParam String name) {
+		System.out.println("Request Param is: "+name); //Not recommended for PROD Code
+		return "login";
+}
+Here we are getting value from url in our controller code. Now, we want to pass it in our login.jsp. Here comes the concept of Model.
+So anything that we want to pass from our controller to jsp, we use model.
+//http://localhost:8080/login/?name=Ranga
+	@RequestMapping("login")
+	public String gotoLoginPage(@RequestParam String name, ModelMap model) {
+		model.put("name", name);
+		System.out.println("Request Param is: "+name); //Not recommended for PROD Code
+		return "login";
+}
+
+Now, we have to access it our JSP page. We can access value using Expression Language. We write expression Language something like this ${}
+<html>
+<head>
+	<title>Login Page</title>
+</head>
+<body>
+	Welcome to the login page ${name}!	
+</body>
+</html>
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+Step 09-Quick Overview: Importance of Logging with Spring Boot
+
+logging.level.org.springframework=INFO
+Where org.springframework is the package name. So any class in this package will be  at logging at INFO level.
+Suppose we want all the classes of our application root package at logging level of debug
+loggin.level.com.in28minutes.springboot.myfirstwebapp=debug
+So, now only this package will be printed at debug level and except this other things will be at logging level of INFO.
+Right now, we don't have any logs coming out from our application. So now let's learn how to add a logging into our application.
+System.out.println is not recommended in PROD code. 
+We should use Logger.
+
+private Logger logger = LoggerFactory.getLogger(getClass()); 
+The logger we are using from slf4j.
+
+In controller method,
+logger.debug("Request Param is {}"+name);
+logger.info("I want this to be printed at info level");
+logger.warn("I want this to be printed at warn level");
+if loggin.level.com.in28minutes.springboot.myfirstwebapp is at debug level, it will print the information at debug, info and warn. And It happens like this.
+
+We can see spring-boot-starter-logging in dependency hierarchy.
+pom.xml>>dependency hierarchy>>Search logging>> You can see spring-boot-starter-logging under spring-boot-starter-web.
+The default logging framework that spring boot use Logback with SLF4j.
+
+@RequestMapping("login")
+	public String gotoLoginPage(@RequestParam String name, ModelMap model) {
+		model.put("name", name);
+		logger.debug("Request Param is {}"+name);
+		logger.info("I want this to be printed at info level");
+		logger.warn("I want this to be printed at warn level");
+		System.out.println("Request Param is: "+name); //Not recommended for PROD Code
+		return "login";
+}
+
+--------------------------------------------------------------------------------------------------------------------
+
+Understanding DispatcherServlet, Model1, Model2 and Front Controller
+
+Let's peek into the history -  
+Model1 Architecture
+======================
+All code in Views (JSPs,...)
+	.View Logic 
+	.Flow Logic 
+	.Queries to databases
+
+At that time, there was no controller at all. Everything was the part of the JSP. 
+Disadvantages
+	.Very complex JSPs.
+	.Zero separation of concerns.
+
+Model2 Architecture
+========================
+separation of concerns
+	.Model - Data to generate the view.
+	.View - Show information to user.
+	.Controller - Controls the Flow.
+Advantage
+	Simpler to maintain
+Concern
+	Where to implement common features for all controllers.
+
+
+Model 2 Architecture with Front Controller Pattern
+====================================================
+Concept: All requests flow into a central controller called as front controller.
+Front Controller controls flow to controller's and view's 
+Common features can be implemented in the Front Controller.
+
+
+
+Spring MVC Front Controller - Dispatcher Servlet 
+=====================================================
+DispatcherServlet is the implementation of Model 2 Architecture Front Controller Pattern
+
+
+A. Receives HttpRequest
+B. Processes HttpRequest
+	B1: Identifies correct controller method(Based on Request URL).
+	B2: Executes controller method
+			Returns Model and View name.
+	B3: Identifies correct view 
+			Using ViewResolver			
+	B4: Executes view
+C. Returns HttpResponse
+
+
+localhost:8080/login
+	B1: Identifies correct controller method(Based on Request URL).
+			/login => LoginController.gotoLoginPage
+	B2: Executes controller method
+			=>Put data into model
+			=>Returns view name => login
+
+	B3: Identifies correct view 
+			Using ViewResolver
+			/WEB-INF/jsp/login.jsp			
+	B4: Executes view
+
+
+	====================================================================================================================================================
+	Step 11- Creating a Login Form 
+	To get value from user, we use form tag.
+
+	Note: We can remove unused imports 
+	Right click>> Source>> Organize imports
+
+
+
+************************************************
+	<html>
+<head>
+	<title>Login Page</title>
+</head>
+<body>
+	Welcome to the login page !	
+	<form>
+		Name: <input type="text" name="name"/>
+		<input type="submit">
+	</form>
+</body>
+</html>
+
+
+@RequestMapping("login")
+public String gotoLoginPage() {
+		return "login";
+}
+***************************************************
+Now, if we hit url localhost:8080/login
+You will get login page. When you submit (Suppose type Ranga and submit), then  query parameter  is  .....?name=Ranga
+
+
+Now Add Password also
+Name: <input type="text" name="name"/>
+Password: <input type="password" name="password"/>
+			<input type="submit">
+
+
+Now, if we hit url localhost:8080/login
+and submit (name = name and password=password)
+QuaryParams become ...?name=name&password=password
+Here, RequestMethod is GET, all the information is sent as the part of our url and this is not secured. So, whenever we build form, we use Method Type Post.
+We can check this, Inspect>>Network>>Click your url>>Doc>>Payload>>You can see our Query String Parameters
+************************
+	login.jsp
+	-----------
+	<form method="post">
+		Name: <input type="text" name="name"/>
+		Password: <input type="password" name="password"/>
+		<input type="submit">
+	</form>
+	***********************
+Now, if you submit the form, you will not see QueryParams in the url. (But they are sent, You can check---Inspect>>Network>>Doc>>Payload>> We can see our Parameters as Form Data)
+
+
+
+=====================================================================================================================================================================
+Step 12-Displaying Login Credentials in a JSP using Model
+
+***********************************************
+@RequestMapping("login")
+public String gotoLoginPage() {
+		return "login";
+}
+****************************************************************
+This method is handling both GET and POST request. We want that this method should handle only GET request.
+So we can make handle only get request
+Why are we we getting Login form again after submitting or we can say why the url is http://localhost:8080/login (in case of post request and http://localhost:8080/login?name=Ranga&password=password) after submitting 
+the form?
+Reason: In our form tag, we did not specify any other action.
+*****************************************************************
+@RequestMapping(value="login", method=RequestMethod.GET)
+public String gotoLoginPage(){
+	return "login";
+}
+*******************************************
+Now, if we hit url http:/localhost:8080/login
+We will get a form and if we submit, we will get 404 error. 
+The Reason is
+after submitting we can see the url -- localhost:8080/login (This url is for POST request and for request mapping "login", but method with requestMapping "login" is only for GET request)
+
+So, we will have to create another method 
+****************************************************************
+	@RequestMapping(value="login", method=RequestMethod.POST)
+	public String gotoWelcomePage() {
+				return "welcome";
+	}
+****************************************************************
+
+
+Now, we want to get form data in our jsp page, we can modify above method---
+****************************************************************
+	@RequestMapping(value="login", method=RequestMethod.POST)
+	public String gotoWelcomePage(@RequestParam String name,@RequestParam String password,ModelMap model) {
+				model.put("name", name);
+		    model.put("password", password);
+				return "welcome";
+	}
+
+
+	welcome.jsp
+	<html>
+		<head>
+			<title>Login Page</title>
+		</head>
+		<body>
+			
+			 Welcome to Spring Boot <br>
+			 Name: ${name } <br>
+			 Password: ${password } 
+			
+		</body>
+</html>
+****************************************************************
+
+================================================================================================================================================================
+Step 13- Add hard coded validation of userid and password
+
+  //Authentication
+	//name -  in28minutes
+	//password - dummy
+
+	****************************
+	@Service
+public class AuthenticationService {
+
+	public boolean authenticate(String username,String password) {
+		
+		boolean isValidUserName=username.equalsIgnoreCase("in28minutes");
+		boolean isValidPassword = password.equalsIgnoreCase("dummy");
+		return isValidUserName && isValidPassword;
+	}
+}
+
+
+
+@Controller
+public class LoginController {
+
+
+private AuthenticationService authenticationService;
+
+	public LoginController(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
+	}
+
+@RequestMapping(value = "login", method = RequestMethod.POST)
+	public String gotoWelcomePage(@RequestParam String name, @RequestParam String password, ModelMap model) {
+		if (authenticationService.authenticate(name, password)) {
+			model.put("name", name);
+			model.put("password", password);
+			// Authentication
+			// name - in28minutes
+			// password - dummy
+			return "welcome";
+		}
+	
+		return "login";
+		
+	}
+
+}
+********************************************
+
+Now, I want to add error message if someone enters wrong Credentials. For this, we use model
+In our Controller method, 
+model.put("errorMessage","Invalid Credentials! Please try again")
+===============================================================================================================================================================
+
+
+Step 14: Getting Started with ToDo features - Creating Todo and Todo Service
+
+//id 
+//username 
+//description
+//targetdate
+//done
+
+LocalDate is recommended over Date. LocalDate is from java.time.LocalDate.
+
+In this project, we will move step by step. First we will use static List of todos and then we will be shifted to databases (h2 and MySql)
+
+**********************************************************************************************
+public class ToDo {
+
+	private int id;
+	private String username;
+	private String description;
+	private LocalDate targetDate;
+	private Boolean done;
+}
+
+@Service
+public class ToDoService {
+
+	private static List<ToDo> todos = new ArrayList<>();
+	
+	static {
+		todos.add(new ToDo(1,"in28minutes","Learn DevOps",LocalDate.now().plusYears(1),false));
+		todos.add(new ToDo(2,"in28minutes","Learn Kafka",LocalDate.now().plusYears(2),false));
+		todos.add(new ToDo(3,"in28minutes","Learn Dev",LocalDate.now().plusYears(3),false));
+	}
+	
+	public List<ToDo> getToDos(){
+		return todos;
+	}
+}
+
+@Controller
+public class ToDoController {
+
+	private ToDoService todoService;
+	
+	public ToDoController(ToDoService todoService) {
+		this.todoService = todoService;
+	}
+	
+	@RequestMapping(value="list-todos",method=RequestMethod.GET)
+	public String listToDos(ModelMap model) {
+		List<ToDo> todos= todoService.getToDos();
+		model.put("todos", todos);
+		return "ListToDos";
+	}
+}
+
+ListToDos.jsp
+.
+.
+ToDos : ${todos} 
+.
+.
+******************************************************************************
+
+==============================================================================================================================================================
+
+Step 16- Understanding Session vs Model vs Request - @SessionAttribute
+
+##Food For Thought
+First you run the application, type url http:/localhost:8080/login
+Request goes to 
+@RequestMapping(value = "login", method = RequestMethod.GET)
+	public String gotoLoginPage() {
+		return "login";
+}
+
+
+Then to--
+<html>
+<head>
+	<title>Login Page</title>
+</head>
+<body>
+	Welcome to the login page !	
+	<pre>${errorMessage}</pre>
+	<form method="post">
+		Name: <input type="text" name="name"/>
+		Password: <input type="password" name="password"/>
+		<input type="submit">
+	</form>
+</body>
+</html>
+
+Now url--  
+http:/localhost:8080/login
+and we get login page
+After submit, the request goes to --
+@RequestMapping(value = "login", method = RequestMethod.POST)
+	public String gotoWelcomePage(@RequestParam String name, @RequestParam String password, ModelMap model) {
+		if (authenticationService.authenticate(name, password)) {
+			model.put("name", name);
+			
+			// Authentication
+			// name - in28minutes
+			// password - dummy
+			return "welcome";
+		}
+		model.put("errorMessage", "Invalid Credentials! Please try again.");
+		return "login";
+		
+	}
+
+Since form does not have any action, and request method type is post, so the url becomes-- 
+http:/localhost:8080/login (Not http:/localhost:8080/login?name=Ranga&password=dummy)
+and we get details on the page through welcome.jsp
+
+
+Suppose, I give link to list-todos in welcome.jsp, 
+<html>
+<head>
+	<title>Welcome Page</title>
+</head>
+<body>
+	<div>Welcome to in28minutes </div>
+	<div>Your Name: ${name }</div>
+	<div><a href="list-todos">Manage</a>Your ToDos</div>
+	
+</body>
+</html>
+
+and if i click on that link, the url becomes http:/localhost:8080/list-todos (Not http:/localhost:8080/login)
+
+So, in welcome page we are creating another request list-todos. and when we hit the link, we lost all the previous details (in28minutes, dummy), we can see that in network>doc. So, all the values 
+present in a request are only valid for that specific request only and only available for the next page.
+
+If we put anything in a model, it is available only for the scope of that request. So, in the above programme, value (in28minutes, dummy) are available in welcome.jsp with the help of 
+Model. And after click on Manage link or we can creating another request. That value will not travel to the next page listToDos.jsp.
+
+We can verify that
+<html>
+<head>
+	<title>List ToDos Page</title>
+</head>
+<body>
+	<div>Welcome to ${name } </div>
+	<div>Your ToDos are ${todos}</div>
+</body>
+</html>
+## End of Food of Thought ##
+
+Whenever we want to retain values across certain requests, we use Session. We put values in Session by using @SessionAttributes("name") annotation. 
+In LoginController, we are putting value in Model. But, we want to use this value in next page. So we would need to put this value in Session using @SessionAttributes("name") along with adding
+this in Model (model.put("name",name)) in LoginController. 
+
+@Controller
+@SessionAttributes("name")
+public class LoginController {
+
+	private AuthenticationService authenticationService;
+
+	public LoginController(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
+	}
+
+	// http://localhost:8080/login/?name=Ranga
+	@RequestMapping(value = "login", method = RequestMethod.GET)
+	public String gotoLoginPage() {
+		return "login";
+	}
+
+	@RequestMapping(value = "login", method = RequestMethod.POST)
+	public String gotoWelcomePage(@RequestParam String name, @RequestParam String password, ModelMap model) {
+		if (authenticationService.authenticate(name, password)) {
+			model.put("name", name);
+			
+			// Authentication
+			// name - in28minutes
+			// password - dummy
+			return "welcome";
+		}
+		model.put("errorMessage", "Invalid Credentials! Please try again.");
+		return "login";
+		
+	}
+}
+
+To make name attribute available in ToDoController, We also need add @SessionAttributes("name") at class level.
+
+*******************************************************************
+===============================================================================================================================================
+
+Step 17 - Adding JSTL to Spring Boot project and showing ToDos in a table
+
+We need to add two Dependencies. The first dependency is JSTL api dependency and second one is JSTL implementation dependency.
+
+<dependency>
+			<groupId>jakarta.servlet.jsp.jstl</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+</dependency>
+<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>glassfish-jstl</artifactId>
+</dependency>
+
+
+Before using JSTL tags, we would need to import it.
+We want for loop around all the todos. For this, we use JSTL Core libraries.  (Search Google>> jstl core library >> official site oracle). You can copy taglib from there. No
+need to remember that.
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+=================================================================================================================================================================
+
+Step 18 - Adding Bootstrap CSS framework to Spring Boot project using webjars
+
+As we downloaded jars using dependency descriptors. We can also download bootstrap as a webjars. 
+In the case of bootstrap or static content, versions are not managed by spring boot starter parent.That's why we would also need to specify version.
+
+We will add two Dependencies one for bootstrap and another one for jquery
+<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>5.1.3</version>
+</dependency>
+<dependency>
+		  <groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>3.6.0</version>
+</dependency>
+
+Go to Maven dependency>> bootstrap 5.1.3>> CSS>> copy qualified name of bootstrap.min.css  (We are using minimized version)
+/META-INF/resources/webjars/bootstrap/5.1.3/css/bootstrap.min.css
+
+Do similar in js folder 
+/META-INF/resources/webjars/bootstrap/5.1.3/js/bootstrap.min.js
+
+Go to jquery 3.6.0 jar and copy qualified name 
+/META-INF/resources/webjars/jquery/3.6.0/jquery.min.js
+
+
+Now, add these in listToDos.jsp 
+*********************************************************
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+<head>
+	<link href="webjars/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+	<title>List ToDos Page</title>
+</head>
+<body>
+	<div>Welcome ${name } </div>
+	<hr>
+	<h1>Your ToDos are </h1>
+	<table>
+		<thead>
+			<tr>
+			<th>id</th>
+			<th>Description</th>
+			<th>Target Date</th>
+			<th>is Done?</th>
+			</tr>
+		</thead>
+		<tbody>
+		 	<c:forEach items="${todos }" var="todo">
+		 	<tr>
+		 		<td>${todo.id }</td>
+		 		<td>${todo.description }</td>
+		 		<td>${todo.targetDate }</td>
+		 		<td>${todo.done }</td>
+		 	</tr>	
+		 	</c:forEach>
+		</tbody>
+	</table>	
+	<script src="webjars/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+	<script src="webjars/jquery/3.6.0/jquery.min.js"></script>
+</body>
+</html>
+
+
+hit url -- http://localhost:8080/list-todos
+Inspect>>Network>> doc >> click url >> Response >> You can see all these files added.
+								>> all >> You can see downloaded bootstrap.min.css, bootstrap.min.js, jquery.min.js 
+
+===========================================================================================================================================================
+
+Step 19 - Formatting JSP pages with Bootstrap CSS framework
+
+In boostrap, it is recommended to put all the content in div tag with class="container"
+
+****************************************************
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+<head>
+	<link href="webjars/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+	<title>List ToDos Page</title>
+</head>
+<body>
+	<div class="container">
+	
+	<h1>Your ToDos are </h1>
+	<table class="table">
+		<thead>
+			<tr>
+			<th>id</th>
+			<th>Description</th>
+			<th>Target Date</th>
+			<th>is Done?</th>
+			</tr>
+		</thead>
+		<tbody>
+		 	<c:forEach items="${todos }" var="todo">
+		 	<tr>
+		 		<td>${todo.id }</td>
+		 		<td>${todo.description }</td>
+		 		<td>${todo.targetDate }</td>
+		 		<td>${todo.done }</td>
+		 	</tr>	
+		 	</c:forEach>
+		</tbody>
+	</table>	
+	</div>
+	<script src="webjars/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+	<script src="webjars/jquery/3.6.0/jquery.min.js"></script>
+	
+</body>
+</html>
+
+*******************************************************************************************
+
+Step 20 - Lets add new ToDo  - Create a new view
+
+
+
+==================================================================================================================================
+
+Step 21 - Enhancing TodoService to add the todo
+
+==================================================================================================================================
+
+Step 22 - Adding validations using Spring boot Starter validation
+
+validations in front-end (HTML and Javascript) are easily overridden by hackers. So the best practice is to always have server side validation.
+
+Validations with Spring Boot
+1. Spring Boot starter validation
+	  pom.xml
+2. Command Bean (Form backing object)
+		2-way binding (todo.jsp & ToDoController.java)
+3. Add validations to Bean
+		Todo.java
+4. Display validation errors in the view
+		todo.jsp
+
+
+1.<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+2. Command Bean (Form backing object)
+		Since we are binding only description using @RequestParam. But the code become complex there many things to bind. Instead of binding parameters with @RequestParam,
+		we can directly bind them to the bean (ToDo).
+	
+	
+	**************************************************************
+		@RequestMapping(value="add-todo",method=RequestMethod.POST)
+		public String addNewTodo(ModelMap model, ToDo todo) {
+			String username = (String)(model.get("name"));
+			todoService.addTodo(username,todo.getDescription(), LocalDate.now().plusYears(1), false);
+		return "redirect:list-todos";
+	}
+	*************************************************************
+
+
+	In order to make use of Form backing object in jsp. We need to use Spring Form tag library.
+	Google >> Spring form tag library documentation >> click on page "View Technologies - Spring"
+
+	We done two steps.
+	==================================================================================================================================================
+
+	Step 23 - Using command beans to implement new Todo Page validation
+
+	.
+	.
+	.
+
+	Step 26 -
+	=================================================================================================================================================
+
+	
+	Resource for next step - 27
+
+	pom.xml
+	<dependency>
+		<groupId>org.webjars</groupId>
+		<artifactId>bootstrap-datepicker</artifactId>
+		<version>1.9.0</version>
+	</dependency>
+
+
+	===================================================================================================================================================
+
+Step - 27
+
+*********************************************
+Enclosed description in <fieldset> tag, 
+	<fieldset class="mb-3">
+				<form:label path="description">Description</form:label>
+				<form:input type="text" path="description" required="required" />
+				<form:errors path="description" cssClass="text-warning" />
+				<br>
+			</fieldset>
+
+Added fieldset for target date 
+<fieldset class="mb-3">
+				<form:label path="targetDate">Target Date</form:label>
+				<form:input type="text" path="targetDate" required="required" />
+				<form:errors path="targetDate" cssClass="text-warning" />
+				<br>
+			</fieldset>
+*******************************************
+
+
+For a date formate we add a property in application.properties
+spring.mvc.format.date=yyyy-MM-dd       (In spring, mm is for second)
+
+
+
+Instead of writing text of target date, another way is 
+	In  pom.xml, we add a framework
+	<dependency>
+		<groupId>org.webjars</groupId>
+		<artifactId>bootstrap-datepicker</artifactId>
+		<version>1.9.0</version>
+	</dependency>
+
+maven-Dependencies >> bootstrap-datepicker 1.9.0
+js >> bootstrap-datepicker.min.js >> copy qualified name
+css >> bootstrap-datepicker.standalone.min.css >> copy qualified name	
+
+
+*************************************
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<html>
+<head>
+<link href="webjars/bootstrap/5.1.3/css/bootstrap.min.css"
+	rel="stylesheet">
+<link href="/webjars/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css"
+	rel="stylesheet">
+<title>Add Todo Page</title>
+</head>
+<body>
+	<div class="container">
+		<h1>Enter Todo Details</h1>
+		<form:form method="post" modelAttribute="todo">
+			<fieldset class="mb-3">
+				<form:label path="description">Description</form:label>
+				<form:input type="text" path="description" required="required" />
+				<form:errors path="description" cssClass="text-warning" />
+				<br>
+			</fieldset>
+
+			<fieldset class="mb-3">
+				<form:label path="targetDate">Target Date</form:label>
+				<form:input type="text" path="targetDate" required="required" />
+				<form:errors path="targetDate" cssClass="text-warning" />
+				<br>
+			</fieldset>
+			
+			<form:input type="hidden" path="id" />
+			<form:input type="hidden" path="done" />
+			<input type="submit" class="btn btn-success" />
+		</form:form>
+	</div>
+	<script src="webjars/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+	<script src="webjars/jquery/3.6.0/jquery.min.js"></script>
+	<script src="/webjars/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+</body>
+</html>
+
+
+
+**************************************
+
+Now, we need to tie the framework with the Target Date field
+Google >> bootstrap datepicker
+
+
+Click Bootstrap datepicker (https://bootstrap-datepicker.readthedocs.io/)
+Under Configuration--
+$('.datepicker').datepicker({
+    format: 'mm/dd/yyyy',
+    startDate: '-3d'
+});
+
+
+Add this to the bottom of Todo.jsp
+<script type="text/javascript">
+	$('#targetDate').datepicker({
+	    format: 'yyyy-mm-dd',
+	    startDate: '-3d'
+	});
+	</script>
+
+
+
+
+===================================================================================================================================================
+
+Step 28 -  Adding a Navigation Bar and implementing JSP fragments
+
+
+For Navigation Bar - 
+<nav class="navbar navbar-expand-md navbar-light bg-light mb-3 p-1">
+	<a class="navbar-brand m-1" href="https://courses.in28minutes.com">in28Minutes</a>
+	<div class="collapse navbar-collapse">
+		<ul class="navbar-nav">
+			<li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+			<li class="nav-item"><a class="nav-link" href="/list-todos">Todos</a></li>
+		</ul>
+	</div>
+	<ul class="navbar-nav">
+		<li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+	</ul>	
+</nav>
+
+
+
+For avoiding duplicacy of code in jsp files, we  used JSP fragments	(See Github steps or Our Code)
+
+========================================================================================================================================================
+
+Step 29 - Preparing for Spring Security
+
+In this step, we did nothing. Just clean-up activity.
+
+
+======================================================================================================================================================
+
+Step 30 - Setting up spring security with Spring Boot starter security
+
+Add below dependency in pom.xml file
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+
+=======================================================================================================================================================
+Step 31 - Configuring Spring Security with custom user and password encoder
+
+In Spring Security Configuration class
+*********************************************************
+@Bean
+	public InMemoryUserDetailsManager createUserDetailsManager() {
+		Function<String, String> passwordEncoder= input ->passwordEncoder().encode(input);
+		UserDetails userDetails = User.builder()
+				.passwordEncoder(passwordEncoder)
+			.username("in28minutes")
+			.password("dummy")
+			.roles("USER","ADMIN")
+			.build();
+		return new InMemoryUserDetailsManager(userDetails);
+	}
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+************************************************************
+===================================================================================================================================================
+
+Step 32 - Refactoring and Removing Hardcoding of User id
+
+*****************************************************************************
+
+In WelcomeController.java
+@Controller
+@SessionAttributes("name")
+public class WelcomeController {
+
+	
+	// http://localhost:8080/login/?name=Ranga
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String gotoWelcomePage(ModelMap model) {
+		model.put("name", getLoggedInUsername());
+		return "welcome";
+	}
+	
+	public String getLoggedInUsername() {
+		 Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+		 return authentication.getName();
+	}
+
+}
+
+
+
+@Controller
+@SessionAttributes("name")
+public class ToDoController {
+
+	private ToDoService todoService;
+	
+	public ToDoController(ToDoService todoService) {
+		this.todoService = todoService;
+	}
+	@RequestMapping("list-todos")
+	public String listAllTodos(ModelMap model) {
+		String username = getLoggedInUsername(model);
+		List<ToDo> todos= todoService.findByUsername(username);
+		model.addAttribute("todos", todos);
+		
+		return "listTodos";
+	}
+	
+	@RequestMapping(value="add-todo",method=RequestMethod.GET)
+	public String showNewTodoPage(ModelMap model) {
+		String username = getLoggedInUsername(model);
+		ToDo todo = new ToDo(0,username,"",LocalDate.now().plusYears(1),false);
+		model.put("todo", todo);
+		return "todo";
+	}
+	private String getLoggedInUsername(ModelMap model) {
+		 Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+		 return authentication.getName();
+	}
+	
+	@RequestMapping(value="add-todo",method=RequestMethod.POST)
+	public String addNewTodo(ModelMap model, @Valid @ModelAttribute("todo")  ToDo todo, BindingResult result) {
+		 if(result.hasErrors())
+		 { 
+			 return "todo";
+		 }
+		 String username = getLoggedInUsername(model);
+		 todoService.addTodo(username,todo.getDescription(),todo.getTargetDate() , false);
+		 return "redirect:list-todos";
+	}
+	
+	@RequestMapping("delete-todo")
+	public String deleteTodo(@RequestParam int id) {
+		 todoService.deleteById(id);
+		return "redirect:list-todos";
+	}
+	
+	@RequestMapping(value="update-todo",method=RequestMethod.GET)
+	public String showUpdateTodoPage(@RequestParam int id,ModelMap model) {
+		
+		ToDo todo = todoService.findById(id);
+		model.put("todo", todo);
+		return "todo";
+	}
+	
+	@RequestMapping(value="update-todo",method=RequestMethod.POST)
+	public String updateTodo(ModelMap model, @Valid @ModelAttribute("todo")  ToDo todo, BindingResult result) {
+		 if(result.hasErrors())
+		 { 
+			 return "todo";
+		 }
+		 String username = getLoggedInUsername(model);
+		 todo.setUsername(username);
+		 todoService.updateTodo(todo);
+		 return "redirect:list-todos";
+	}
+}
+
+
+
+
+In ToDoService.java
+public List<ToDo> findByUsername(String username){
+		Predicate<? super ToDo> predicate = todo->todo.getUsername().equalsIgnoreCase(username);
+		return todos.stream().filter(predicate).toList();
+	}
+	
+
+
+******************************************************************************************************
+
+Note: How to refactor code
+Answer: Select the code, right click>> refactor
+
+=============================================================================================================================================
+
+
+
+Step 33  - Setting up a new User for ToDo application
+
+****************************************************************************************************
+
+In SpringSecurityConfiguration class --
+
+@Bean
+	public InMemoryUserDetailsManager createUserDetailsManager() {
+		
+		UserDetails userDetails1 = createNewUser("in28minutes", "dummy");
+		UserDetails userDetails2 = createNewUser("ranga", "dummydummy");
+		return new InMemoryUserDetailsManager(userDetails1,userDetails2);
+	}
+
+	private UserDetails createNewUser(String username, String password) {
+		Function<String, String> passwordEncoder = input -> passwordEncoder().encode(input);
+		UserDetails userDetails = User.builder()
+				.passwordEncoder(passwordEncoder)
+				.username(username)
+				.password(password)
+				.roles("USER", "ADMIN")
+				.build();
+		return userDetails;
+	}
+
+******************************************************************************************************
+===========================================================================================================================================
+
+
+Step 34 -- Adding Spring Boot starter Data Jpa and getting H2 database ready
+
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>com.h2database</groupId>
+	<artifactId>h2</artifactId>
+	<scope>runtime</scope>							(We don't want h2 database as part of our jar file)
+</dependency>
+
+
+Start the application, you can see in console
+o.s.b.a.h2.H2ConsoleAutoConfiguration: H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:1b5358e4-b626-4215-acf1-70356139d33c'
+
+Now hit url --
+http://localhost:8080/h2-console
+We will get h2 console from where we can connect to h2 database.
+
+Note: This url 'jdbc:h2:mem:1b5358e4-b626-4215-acf1-70356139d33c' is keep changing if we restart the server again and again.
+
+We can make h2 database url constant. 
+In application.properties---
+spring.datasource.url=jdbc:h2:mem:testdb
+
+Now, h2 console>> JDBC url>> Paste jdbc:h2:mem:testdb and connect  (But we will get error due to some spring security Configuration)
+
+=============================================================================================================================================================
+
+Step 35(01) -- Configuring Spring Security to get H2 console working
+
+If we do not configure anything, there are  Two things which are configured
+1- All URLs are protected.
+2- A login form is shown for unauthorised requests.
+
+To access h2 console, we would need to disable CSRF(Cross Site Request Forgery) in order to access h2 database. 
+h2 also make use of frames. Spring security does not allow frames by default. So, we have to make sure frames are also allowed.
+
+Security Filter Chain: Defines a filter chain matched against every request.
+By default, Security Filter Chain defines only these two features
+1- All URLs are protected.
+2- A login form is shown for unauthorised requests.
+
+
+When we override SecurityFilterChain, we need to define entire chain again --
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.authorizeHttpRequests(
+				auth->auth.anyRequest().authenticated()
+				);
+		http.formLogin(withDefaults());
+		return http.build();
+	}
+
+
+	And then --
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.authorizeHttpRequests(
+				auth->auth.anyRequest().authenticated()
+				);
+		http.formLogin(withDefaults());
+		
+		http.csrf().disable();
+		http.headers().frameOptions().disable();			//X-frame Options enabled=> frames can not be used
+																									//h2 console uses frames => disable X-frame-Options header 
+		return http.build();
+	}
+
+Now, we can access h2 database.
+
+
+===================================================================================================================================
+
+Step 35 - 02: JDBC to Spring JDBC to JPA to Spring Data Jpa - 10000 ft Overview
+
+
+===============================================================================================================================
+
+Step 36 - Making Todo an entity and Population Todo data into h2
+If you say ToDo is an Entity, that means this bean is mapped to a database table.
+
+(Due to autoconfiguration, if it  sees any Entity, it creates  table in h2 database)
+@Entity
+public class ToDo {
+
+	@Id
+	@GeneratedValue
+	private int id;
+	.
+	.
+	.
+}
+Automatically TO_DO is created in h2 database.
+
+if--
+@Entity(name="TodoABC")
+then--
+table created in h2 database ----  TODOABC
+
+Note: The table will be created in h2 with columns and the name of the column will be the same as the name of the fields in ToDo class.
+But, you can change the name of columns in To_DO table in h2 database using 
+@Column(name="..") on fields.
+
+Now, populate some data to start off--
+Create data.sql file under
+src/main/resources
+
+(For using sql editor in our eclipse, help>> marketplace>> install SQL Development Tools or SQL Editor)
+
+In data.sql--
+insert into todo (ID,USERNAME,DESCRIPTION,TARGET_DATE,DONE)
+values(10001,"in28minutes","Get AWS Certified",CURRENT_DATE(),false);
+
+When you run the application, We get error (table todo not found). The reason is that data.sql is executed before entities are processed.
+We can change that in application.properties --
+spring.jpa.defer-datasource-initialization=true
+
+Note: If Entity is ToDo, then the table will be created as TO_DO in h2. If the field name is targetDate, then column will be created as
+TARGET_DATE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

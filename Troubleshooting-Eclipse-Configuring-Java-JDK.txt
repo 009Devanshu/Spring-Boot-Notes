@@ -1,0 +1,7 @@
+Check Whether We are using JDK or JRE
+====================================================
+Windows> Preferences> Type Installed JRE> "You will see, JRE is ticked which is not a good practice, so > add Button> Standard VM> In JRE Home, set path upto JDK 
+
+Clean And Build
+=============================================
+Project>Clean

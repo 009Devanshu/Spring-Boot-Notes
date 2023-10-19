@@ -1,0 +1,40 @@
+Step 00: 
+Great unit tests => Easier Maintenance
+However, writing great units is not easy
+    Applications have multiple layers
+        .Each class has multiple dependencies.
+
+How do you write classes with multiple dependencies?
+    Option 1: Stubs
+    Option 2: Mocks
+
+
+Step 01: Setting up a spring boot project
+
+Spring Initializer >> Create a project with no dependency.
+All the tests that we will be writing in this project will be written in src/test/java --
+
+
+
+The below starter project brings in mockito--
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+
+=====================================================================================================================================================
+
+Step 02: Understanding problems with Stubs 
+
+src/test/java
+    .business (package)
+        SomeBusinessImplTest (class/junit test case)
+
+        @Test
+	    void test() {
+		    SomeBusinessImpl businessImpl = new SomeBusinessImpl();
+		    businessImpl.findTheGreatestFromAllData();
+	    }
+
+If we run it as junit test, we will get null pointer exception
