@@ -27,6 +27,31 @@ The below starter project brings in mockito--
 
 Step 02: Understanding problems with Stubs 
 
+src/main/java
+    .business(package)
+       public class SomeBusinessImpl {
+
+        private DataService dataService;
+        
+        public int findTheGreatestFromAllData() {
+            int[] data = dataService.retrieveAllData();
+            int greatestValue = Integer.MIN_VALUE;
+            for(int value:data) {
+                if(value>greatestValue) {
+                    greatestValue=value;
+                }
+            }
+            return greatestValue;
+        }
+    }
+
+    interface DataService{
+        int[] retrieveAllData();
+    }
+
+
+
+
 src/test/java
     .business (package)
         SomeBusinessImplTest (class/junit test case)
@@ -37,4 +62,85 @@ src/test/java
 		    businessImpl.findTheGreatestFromAllData();
 	    }
 
-If we run it as junit test, we will get null pointer exception
+If we run it as junit test, we will get null pointer exception. Because dataService is null.
+How can i solve it---
+
+1--Add constructor in SomeBusinessImpl--
+ public class SomeBusinessImpl {
+
+        private DataService dataService;
+
+        public SomeBusinessImpl(DataService dataService)
+        {
+            this.dataService = dataService;
+        }        
+        .
+        .
+        .
+        }
+
+2--Now we will create some stubs and pass into SomeBusinessImpl using constructor
+    src/test/java
+    .business (package)
+
+    class SomeBusinessImplTest {
+
+	@Test
+	void findTheGreatestFromAllData_basicScenario() {
+		DataServiceStub dataServiceStub = new DataServiceStub();
+		SomeBusinessImpl businessImpl = new SomeBusinessImpl(dataServiceStub);
+		businessImpl.findTheGreatestFromAllData();
+		int result=businessImpl.findTheGreatestFromAllData();
+		assertEquals(25,result);
+	}
+}
+class DataServiceStub implements DataService{
+	
+	public int[] retrieveAllData() {
+		return new int[] {25,15,5};
+	}
+}
+
+
+
+Problems with stubs--
+1- Suppose a new abstract method is added in future in DataService, then we will have to provide implementation for that method DataServiceStub.
+2- Suppose we want to create other scenario--
+
+        class SomeBusinessImplTest {
+
+            @Test
+            void findTheGreatestFromAllData_basicScenario1() {
+                DataServiceStub1 dataServiceStub = new DataServiceStub1();
+                SomeBusinessImpl businessImpl = new SomeBusinessImpl(dataServiceStub);
+                int result=businessImpl.findTheGreatestFromAllData();
+                assertEquals(25,result);
+            }
+            
+            @Test
+            void findTheGreatestFromAllData_basicScenario2() {
+                DataServiceStub2 dataServiceStub = new DataServiceStub2();
+                SomeBusinessImpl businessImpl = new SomeBusinessImpl(dataServiceStub);
+                int result=businessImpl.findTheGreatestFromAllData();
+                assertEquals(35,result);
+            }
+        }
+        class DataServiceStub1 implements DataService{
+            
+            public int[] retrieveAllData() {
+                return new int[] {25,15,5};
+            }
+        }
+
+        class DataServiceStub2 implements DataService{
+            
+            public int[] retrieveAllData() {
+                return new int[] {35};
+            }
+        }
+
+========================================================================================================================================================
+
+Step 03 -- Writing your first mockito test with mocks 
+
+
