@@ -144,3 +144,113 @@ Problems with stubs--
 Step 03 -- Writing your first mockito test with mocks 
 
 
+DataService dataServiceMock = mock(DataService.class);
+We can pass interface or a class.
+
+@Test
+void findTheGreatestFromAllData_basicScenario1() {
+    DataService dataServiceMock = mock(DataService.class);
+    SomeBusinessImpl businessImpl = new SomeBusinessImpl(dataServiceMock);
+    int result=businessImpl.findTheGreatestFromAllData();
+    assertEquals(25,result);
+}
+
+It will give null pointer exception.
+
+
+@Test
+void findTheGreatestFromAllData_basicScenario1() {
+    DataService dataServiceMock = mock(DataService.class);
+    when(dataServiceMock.retrieveAllData()).thenReturn(new int[] {25,15,5});
+    
+    SomeBusinessImpl businessImpl = new SomeBusinessImpl(dataServiceMock);
+    assertEquals(25,businessImpl.findTheGreatestFromAllData());
+}
+
+It will give green bar.
+
+==============================================================================================================================================================
+
+
+Step 04: Simplifying tests with Mockito annotations- @Mock, @InjectMocks
+
+@ExtendWith(MockitoExtension.class)
+class SomeBusinessImplTest {
+
+	@Mock
+	private DataService dataServiceMock;
+	
+	@InjectMocks
+	private 	SomeBusinessImpl businessImpl;
+	
+	@Test
+	void test() {
+
+		when(dataServiceMock.retrieveAllData()).thenReturn(new int[] {25,15,5});
+		int result =  businessImpl.findGreatestValue();
+		assertEquals(25,result);
+	}
+
+}
+
+
+
+==================================================================================================================================================================
+
+Step 05: Exploring Mocks further by Mocking List interface
+
+
+public class ListTest {
+
+	@Test
+	void simpleTest() {
+		List listMock =  mock(List.class);
+		
+		//when(listMock.size()).thenReturn(3);
+		
+		when(listMock.size()).thenReturn(3);
+		assertEquals(3,listMock.size());
+		assertEquals(3,listMock.size());
+		assertEquals(3,listMock.size());
+	}
+	
+	@Test
+	void multipleReturns() {
+		List listMock =  mock(List.class);
+		
+		//when(listMock.size()).thenReturn(3);
+		
+		when(listMock.size()).thenReturn(1).thenReturn(2);
+		assertEquals(1,listMock.size());
+		assertEquals(2,listMock.size());
+		assertEquals(2,listMock.size());
+		assertEquals(2,listMock.size());
+
+	}
+	
+	@Test
+	void specificParameters() {
+		List listMock =  mock(List.class);
+		
+		//when(listMock.size()).thenReturn(3);
+		
+		when(listMock.get(0)).thenReturn("SomeString");
+		assertEquals("SomeString",listMock.get(0));
+		assertEquals(null,listMock.get(1));
+		
+
+	}
+	
+	@Test
+	void genericParameters() {
+		List listMock =  mock(List.class);
+		
+		//when(listMock.size()).thenReturn(3);
+		
+		when(listMock.get(Mockito.anyInt())).thenReturn("SomeOtherString");
+		assertEquals("SomeOtherString",listMock.get(0));
+		assertEquals("SomeOtherString",listMock.get(1));
+		
+
+	}
+}
