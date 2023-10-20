@@ -1,0 +1,101 @@
+Step 01: Quick Introduction to REST - Understand Resource and Actions
+
+REST - Representational State Transfer. It is an architectural style for the web (Make use of http).
+Key Abstraction - resource
+    Resource has URI (Uniform Resource Identifier)
+        /users/Ranga - (/users/{id})
+        /users/Ranga/todos - (/users/{id}/todos)
+        /users/Ranga/todos/1 - (/users/{id}/todos/{id})
+    We can perform action on resources
+        CRUD
+
+==============================================================================================================================================
+
+Step 03: Creating your first spring boot resource
+
+@Controller
+public class HelloWorldResource {
+
+	@RequestMapping("/hello-world")
+	@ResponseBody
+	public String helloWorld() {
+		return "Hello World";
+	}
+}
+
+
+When we are creating REST api, we want to return as what they are returning. We don't want to use view like a jsp. So, here we are using @ResponseBody.
+Instead of using @Controller. We can use @RestController which is a combination of @Controller and @ResponseBody. So, we don't need add @ResponseBody annotation at each 
+method.
+
+@RestController
+public class HelloWorldResource {
+
+	@RequestMapping("/hello-world")
+	public String helloWorld() {
+		return "Hello World";
+	}
+}
+
+============================================================================================================================================
+
+Step 04: Creating a second spring boot resource method - Hello World Bean
+
+@RequestMapping("/hello-world-bean")
+public HelloWorldBean helloWorldBean() {
+    return new HelloWorldBean("Hello World Bean");
+}
+
+
+
+
+public class HelloWorldBean {
+
+	private String message;
+
+	public HelloWorldBean(String message) {
+		super();
+		this.message = message;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	@Override
+	public String toString() {
+		return "HelloWorldBean [message=" + message + "]";
+	}
+	
+	
+}
+
+
+
+output: 
+{
+    "message": "Hello World Bean"
+}
+
+
+What are "message" and "Hello World Bean" here--
+The name of the field in HelloWorlBean is message. So, key in json is "message". The field message is being initialized with "Hello World Bean", the value of 
+json is "Hello World Bean". (It does not have any relationship with toString() method).
+
+==============================================================================================================================================================
+
+Step 05: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
