@@ -127,15 +127,93 @@ Suppose we want to pass String type.
 We don't need to type cast 
     String result =  theStore.getItem();
 
+In this programme, if we write Store theStore = new Store(); Store is a raw type. Now, it is not type safe and you will also have to do type-casting.
+In case of collection, 
+List list = new ArrayList();	(Compiler will warn us that you are using raw type)
+list.add(20);					(Hey, we are not doing type-casting? Yes, In case of collection objects, we don't need to type caste despite the fact that we are using raw type of List.)
+
+
+<>  This is diamond operator.
+
 ****************************************************************************************************************************
 
+****************************************************************************************************************************
+
+We have seen generics with a single generic type. We can use multiple generic types.
+
+class Hashtable<K,V>{
+	private K key;
+	private V value;
+	public Hashtable(K key, V value) {
+		super();
+		this.key = key;
+		this.value = value;
+	}
+	@Override
+	public String toString() {
+		return "Hashtable [key=" + key + ", value=" + value + "]";
+	}
+	
+	
+}
+public class App {
+
+	
+	public static void main(String[] args) {
+		Hashtable<String,Integer> hashtable = new Hashtable<>("Hello",12);
+		System.out.println(hashtable);
+	}
+}
+
+Here, Hashtable is a custom class. Not the one from Collection framework.
 
 
 
+********************************************************************************************************
+Generic Methods 
+********************************************************************************************************
+We have seen generic types, now we will see generic methods--
+
+public class GenericMethod {
+
+	public <T> void showItem(T item) {
+		System.out.println("The item is: "+item.toString());
+	}
+}
 
 
 
+/**If we write 
+public  void showItem(T item) {
+		System.out.println("The item is: "+item.toString());
+}
 
+It will give compile time error in the parameter. We will have to use wildcard before return type.
+public <T> void showItem(T item) {
+		System.out.println("The item is: "+item.toString());
+}**/
+
+
+In Main application --
+GenericMethod method = new GenericMethod();
+method.showItem(whatever type of value you can pass);
+Ex1- method.showItem(35);
+Output- The item is 35
+Ex2- method.showItem("Hello World");
+Output- The item is Hello World.
+
+
+We can also return Generic type.
+public <T> T showItem(T item){
+	System.out.println("The item is: "+item.toString());
+	return T;
+}
+
+
+
+********************************************************************************************************
+Generic Methods II 
+********************************************************************************************************
 
 
 
