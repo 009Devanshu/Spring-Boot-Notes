@@ -82,16 +82,214 @@ What are "message" and "Hello World Bean" here--
 The name of the field in HelloWorlBean is message. So, key in json is "message". The field message is being initialized with "Hello World Bean", the value of 
 json is "Hello World Bean". (It does not have any relationship with toString() method).
 
+
 ==============================================================================================================================================================
-
-Step 05: 
-
-
+Step 05: Exploring Path params and Path variables with spring boot
+=============================================================================================================================================================
 
 
+Path variables are used to define our resource URIs.
+
+
+@RequestMapping("/hello-world-path-param/{name}")
+	public HelloWorldBean helloWorldPathParam(@PathVariable String name) {
+		return new HelloWorldBean("Hello World, "+name);
+}
+url passed: http://localhost:8080/hello-world-path-param/Ranga
+In curly bracket, name is Path param. name as parameter is path variable because we used @PathVariable before that.
+
+We can pass multiple path params--
+@RequestMapping("/hello-world-path-param/{name}/message/{message}")
+public HelloWorldBean helloWorldMultiplePathParam
+					(@PathVariable String name,@PathVariable String message) {
+	return new HelloWorldBean("Hello World "+name+","+message);
+}
+URL passed: http://localhost:8080/hello-world-path-param/Ranga/message/Hola
+
+
+=============================================================================================================================================================
+Step 06: Getting ready for Survey Questionnaire REST API 
+=============================================================================================================================================================
+
+Key resources:
+	Surveys
+	Survey Questions
+
+Key Details: 
+	Survey: id, title, description, questions 
+	Survey Questions: id, description, options, correctAnswer
+
+>>Got to github for step 06
 
 
 
+=============================================================================================================================================================
+Step 07: Creating first Survey Spring Boot REST API - Get All Surveys
+=============================================================================================================================================================
+
+Survey Rest API:
+	Retrieve All Surveys
+		Get/surveys
+
+
+public class Question
+{
+	private String id;
+	private String description;
+	private List<String> options;
+	private String correctAnswer;
+
+	public Question(){
+
+	}
+
+	//Constructor with all the fields
+
+	//getters
+
+	//toString
+}
+
+
+public class Survey
+{
+	private String id;
+	private String title;
+	private String description;
+	private List<Question> questions;
+	
+	public Survey(){
+
+	}
+
+	public Survey(String id,String title,String description,List<Question> questions){
+		this.id = id;
+		this.title = title;
+		this.description = description;
+		this.questions = questions;
+	}
+
+	//getters
+
+	//toString() method
+}
+
+@Service
+public SurveyService
+{
+	private static List<Survey> surveys = new ArrayList<>();
+
+	static
+	{
+		Question question1 = new Question("question1","This is Question number one",Arrays.asList("AWS","GCP,"DevOps"),"AWS");		
+		Question question2 = new Question("question2","This is Question number two",Arrays.asList("Java","Python","JavaScript"),"Java");		
+		Question question3 = new Question("question3","This is Question number three",Arrays.asList("SpringBoot","Django","Laravel"),"SpringBoot");
+
+		List<Question> questions = Arrays.asList(question1,question2,question3);
+		Survey survey1 = new Survey("survey1","This is title for survey1","Ready to be launched for the moon",questions);
+		surveys.add(survey1);		
+
+	}
+
+	public List<Survey> retrieveAllServices(){
+		return surveys;
+	}
+}
+
+
+@RestController
+public class SurveyResource
+{
+	private SurveyService surveyService;
+
+	//Constructor Injection
+
+	@RequestMapping("/surveys")
+	public List<Survey> retrieveAllServices(){
+		surveyService.retrieveAllServices();
+	}
+}
+
+url: http://localhost:8080/surveys
+
+
+
+
+
+=============================================================================================================================================================
+Step 08: Creating second Survey Spring Boot REST API - Get a Survey
+=============================================================================================================================================================
+
+Retrieve specific survey 
+	GET/surveys/{surveyId}
+
+
+public class SurveyResource
+{
+	..
+	..
+	@RequestMapping("/surveys/{surveyId}")
+	public Survey retrieveSurveyById(@PathVariable String surveyId){
+	return  surveyService.retrieveSurveyById(surveyId);
+	}
+}
+
+
+public class SurveyService
+{
+	..
+	..
+	public Survey retrieveSurveyById(String surveyId) {
+		Predicate<? super Survey> predicate=survey->survey.getId().equalsIgnoreCase(surveyId);
+		Optional<Survey> optionalSurvey= surveys.stream().filter(predicate).findFirst();
+		if(optionalSurvey.isEmpty())
+			return null;
+		return optionalSurvey.get();
+	}
+}
+
+url: http://localhost:8080/surveys/Survey1
+It will give json return on the browser.
+
+url: http://localhost:8080/surveys/Survey2
+It will give blank on the browser. Because request method in SurveyResource is returning null.
+Inspect >> Network >> doc >> .....Survey2   (We can see HttpStatus 200, but actually the resource Survey2 is not present). 
+
+@RequestMapping("/surveys/{surveyId}")
+public Survey retrieveSurveyById(@PathVariable String surveyId) {
+
+	Survey survey = surveyService.retrieveSurveyById(surveyId);
+
+	if (survey == null) {
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+	}
+
+	return survey;
+}
+
+
+========================================================================================
+Step 09: Exploring Rest Api Best practices - Request Methods and Response Status 
+========================================================================================
+
+REQUEST METHODS FOR REST API--
+-------------------------------------
+GET- Retrieve details of a resource
+POST- Create a new resource
+PUT- Update an existing resource
+Patch- Update part of a resource
+DELETE- Delete a resource
+
+
+RESPONSE STATUS FOR REST API--
+------------------------------------
+200: Success
+201: Created	
+204: No Content	(while Update)
+401: Unauthorized (when authorization fails)
+400: Bad Request (Such as validation Error)
+404: Resource not found 
+500: Server Error 	
 
 
 
