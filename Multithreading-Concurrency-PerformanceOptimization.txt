@@ -1,0 +1,34 @@
+====================================================
+Motivation: Why we need threads?
+====================================================
+1. Responsiveness
+2. Performance
+
+Responsiveness with a single thread --
+One user orders large on online store and it is taking too much time. Other users will have to wait for a long period of time.
+
+1.Responsiveness
+    Concurrency
+    Can be achieved by multi-tasking between threads.
+    Concurrency=Multitasking
+    task1 task2 task1 task2 task1 task2
+    Note: We don't need multiple cores to achieve Concurrency.
+
+2.Performance
+    We can create an illusion of multiple tasks executing in parallel using just a single core.
+    With multiple tasks, we can truly run taks completely in parallel.
+    Ex 
+        Core 2: task3 task4 task3 task4 task3 
+        Core 1: task1 task2 task1 task2 task1 task2 
+
+
+What threads are and where they live --
+When we turn on the computer. Operating system from disk/hard drive loaded into the memory. Operating system provies an interaction between hardware and cpu. So, we can 
+focus on developing our apps. All our applications reside on the disc in the form of a file. When user runs the application, the Operating system takes the program from the 
+disc and creates instance of that application in the memory. That instance is called a process and it is sometimes called context of an application. Each process is completely 
+isolated from any other process that runs on the system. Process contains metadata like process id, files for reading and writing, the code containing instructions that 
+are to be executed on the cpu, heap that contains all the data that cpu needs and atleast one thread that is main thread. 
+A thread contains two main things--
+>The stack.
+>The instruction pointer.    
+In a multithreaded application, each thread comes with its own stack and its own instruction pointer.
