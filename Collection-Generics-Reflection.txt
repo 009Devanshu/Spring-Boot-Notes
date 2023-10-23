@@ -214,6 +214,29 @@ public <T> T showItem(T item){
 ********************************************************************************************************
 Generic Methods II 
 ********************************************************************************************************
+Other Demostrations --
+
+public <T,V> void printItems(T t, V v) {
+		System.out.println(t.toString());
+		System.out.println(v.toString());
+}
+	
+
+
+
+public <T> void showItems(T[] items) {
+	for(T t: items) 
+		System.out.println(t);
+	
+}
+
+In Main method--
+Integer[] items = {10,20,30,40};			(We can not use int[] type array or any primitive type array)
+method.showItems(items);
+
+
+
+
 
 
 

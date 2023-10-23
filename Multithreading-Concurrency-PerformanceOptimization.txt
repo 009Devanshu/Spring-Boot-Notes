@@ -16,7 +16,7 @@ One user orders large on online store and it is taking too much time. Other user
 
 2.Performance
     We can create an illusion of multiple tasks executing in parallel using just a single core.
-    With multiple tasks, we can truly run taks completely in parallel.
+    With multiple cores, we can truly run taks completely in parallel.
     Ex 
         Core 2: task3 task4 task3 task4 task3 
         Core 1: task1 task2 task1 task2 task1 task2 
@@ -31,4 +31,77 @@ are to be executed on the cpu, heap that contains all the data that cpu needs an
 A thread contains two main things--
 >The stack.
 >The instruction pointer.    
-In a multithreaded application, each thread comes with its own stack and its own instruction pointer.
+In a multithreaded application, each thread comes with its own stack and its own instruction pointer. 
+
+Stack - Region in memory where local variables are stored and passed into functions.
+Instruction pointer - Address of the next instruction that the thread is going to execute.
+
+
+
+
+
+*********************************************************************************************************************************
+Operating Systems Fundamentals - Part 2
+*********************************************************************************************************************************
+What We learn in this lecture --
+Context Switch
+Thread Scheduling
+Threads vs Processes
+
+
+Each instance of an application that we run runs independently from other processes. Normally there are way more processes that cores. Each process has one or more threads and 
+all these threads are competiting with each other to be executed on cpu. Even if we have multiple cores, there are way more threads than cores. So the operating system 
+will have to run one thread, then stop it and run another thread and so on. 
+
+Context Switch
+1> Stop thread 1
+2> Schedule thread 1 out
+3> Schedule thread 2 in 
+4> Start thread 2
+This is context Switch.
+
+Context Switching between threads from different processes is costly. Too many threads causes thrashing (speding more time in management than real productive work). The reason 
+is that each thread consumes resources in the cpu and memory. When we Switch from one thread to a different thread--
+    > Store data for one thread 
+    > Restore data for another thread. 
+
+Context Switching between threads from same process is cheaper than context Switch between different processes. The reason is that threads inside a process share a lot of resources 
+themselves.
+
+
+
+
+Now, let's see how operating system decides when to run which thread and when to perform context Switch.
+Let's we have four threads 
+Music Player ui 
+Music Player 
+Text Editor UI 
+File Saver
+
+
+Suppose cpu is  Scheduling threads on the basis of first come first serve
+Problem: Long thread(suppose file saver is long thread) can cause starvation for other thread.
+May cause UI threads being unresponsive - Bad User Experience
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

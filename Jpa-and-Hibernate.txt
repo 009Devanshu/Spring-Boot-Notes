@@ -77,7 +77,23 @@ spring.jpa.defer-datasource-initialization=true              (It will create Ent
 Step 04: Configuring application.properties to enable H2 console and logging
 ----------------------------------------------------------------------------------
 
+# Enabling h2 console
+spring.h2.console.enabled=true
 
+
+# Turn statistics on
+spring.jpa.properties.hibernate.generate_statistics=true
+logging.level.org.hibernate.stat=debug
+
+# Show all queries
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true					(Not recommended in production)
+logging.level.org.hibernate.type=trace							(I want to see what parameters are being sent)
+
+
+spring.jpa.defer-datasource-initialization=true
+
+		
 
 
 
