@@ -292,6 +292,138 @@ RESPONSE STATUS FOR REST API--
 500: Server Error 	
 
 
+==================================================================================================
+Aside
+==================================================================================================
+Difference between put and Patch
+
+PUT - recommended when Updating an existing resource entirely.
+Patch - recommended when Updating an existing resource partially.
+
+
+Problem Demonstration of using PUT while updating only a certain fields --
+
+Suppose we have a resource --
+{
+	"id": 4,
+	"name": "Mixer Grinder",
+	"price": 4999,
+	"description": "Bosch",
+	"productType": "Kitcher and Home"
+}
+
+We want to update only price field--
+
+put/...localhost:8080/{id}
+{
+	"name": "Mixer Grinder",
+	"price": 9999,
+	"description": "Bosch",
+	"productType": "Kitcher and Home"
+}
+
+Here the Problem is that we just need to update only price but need to write all the fields in json body. If we write only the field that we want to be updated then 
+other field values will be inserted as null or whatever the default values that have--
+
+put/...localhost:8080/{id}
+{
+	"name": "Mixer Grinder",
+	"price": 9999,
+	
+}
+
+Then the resource will be updated as --
+put/...localhost:8080/{id}
+{
+	"name": "Mixer Grinder",
+	"price": 9999,
+	"description": null,
+	"productType": null
+}
+
+
+
+
+@RestRepository
+@RequestMapping("/products")
+public class ProductController
+{
+	
+	@Autowired
+    private ProductService service;
+	..
+	..
+	@PatchMapping("/{id}")
+    public Product updateProductFields(@PathVariable int id,@RequestBody Map<String, Object> fields){
+        return service.updateProductByFields(id,fields);
+    }
+
+	..
+
+}
+
+
+
+public class ProductService
+{
+
+	@Autowired
+	private ProductRepository repository;
+	..
+	..
+
+	public Product setProductField(int id, Map<String, Object> fields)
+	{
+		Optional<Product> existingProduct =  repository.findById(id);
+
+		if(existingProduct.isPresent)
+		{
+			fields.forEach(key,value)->(key,value)
+			{
+				Field field = ReflectionUtils.findField(Product.class,key);
+				field.setAccessible(true);
+				ReflectionUtils.setField(field,existingProduct.get(),value);
+				
+			}
+			return repository.save(existingProduct.get());
+		}
+	return null;
+	}
+}
+(For Complete Example, refer to 009Devanshu/path-mapping-example)
+
+
+
+
+=================================================================================================================
+=================================================================================================================
+
+Get, Delete, Put are idempotent.
+Post is non-idempotent.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
