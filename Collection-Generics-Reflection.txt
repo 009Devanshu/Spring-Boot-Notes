@@ -235,6 +235,118 @@ Integer[] items = {10,20,30,40};			(We can not use int[] type array or any primi
 method.showItems(items);
 
 
+********************************************************************************************************
+Exercise
+********************************************************************************************************
+
+Let's implement a generic method that checks 2 parameters share the same value or not!
+
+For example:
+checkEquality(12, 8) returns false
+checkEquality(10.5, 10.5) returns true
+checkEquality("Joe", "Joe") returns true
+
+
+public class Exercise {
+
+    // implement the checkEquality() method that takes 2 values as input parameters and it returns
+    // a boolean value whether the values are mathcing or not
+    public <T,V> boolean checkEquality(T t, V v){
+        return t.equals(v);
+    }
+    public static void main(String args[]){
+        Exercise ex = new Exercise();
+        boolean result =  ex.checkEquality(100,100);
+        System.out.println(result);
+    }
+}
+
+
+
+********************************************************************************************************
+Section 4: Bounded Type Parameters
+Bounded type parameters
+********************************************************************************************************
+
+Sometimes we want to restrict the types that can be used as type arguments in a parameterized type.
+A method that operates on numbers(integers, floats or doubles) might only want to accept instances of the Number class or its subclasses.
+
+Bounded types allow you to invoke methods defined in the bounds.
+public class App {
+
+	public static <T extends Comparable<T>> T calculateMin(T num1,T num2) {
+		if(num1.compareTo(num2)<0) {						//We are able to invoke method defined in Comparable interface.
+			return num1;
+		}
+		return num2;
+	}
+	public static void main(String[] args) {
+		System.out.println(calculateMin("Hello","Anvesh"));
+		System.out.println(calculateMin('k','a'));
+		System.out.println(calculateMin(100,90));
+	}
+}
+
+
+-------------------------------------------------------------
+Another Demostration:
+class Person implements Comparable<Person>{
+	
+	private int age;
+	private String name;
+	
+	public Person(String name,int age) {
+		this.age = age;
+		this.name = name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public int compareTo(Person otherPerson) {
+		return Integer.compare(age, otherPerson.getAge());
+	}
+	@Override
+	public String toString() {
+		return "Person [age=" + age + ", name=" + name + "]";
+	}
+	
+}
+
+public class App {
+
+	public static <T extends Comparable<T>> T calculateMin(T num1,T num2) {
+		if(num1.compareTo(num2)<0) {
+			return num1;
+		}
+		return num2;
+	}
+	public static void main(String[] args) {
+		System.out.println(calculateMin(new Person("Kevin",48),new Person("Henry",78)));
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
