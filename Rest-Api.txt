@@ -401,8 +401,93 @@ public class ProductService
 Get, Delete, Put are idempotent.
 Post is non-idempotent.
 
+Question: Can we use Get method to create resource?
+Answer:
+idempotence: Get is designed to be idempotent.
+Caching: Get requests are usually cached by intermediaries like proxy servers. Caching is done because Get request is not supposed to change server state. If we start 
+using Get to create or modify resource, and when a cached request is served, it won't perform the intended resource creation or modification, leading to inconsistencies.  
+Security: Information is visible in query parameters. 
+		  Logs often record the complete url, including query parameters. 
 
 
+
+
+===================================================================================================================
+Step 10: Exercise- Creating Survey Question related Spring boot REST API method 
+===================================================================================================================
+
+Survey Questions REST API--
+>Retrieve Survey Questions 
+	GET/surveys/{surveyId}/questions 
+	GET/surveys/{surveyId}/questions/{questionId}
+
+
+@RestController
+public class SurveyResource 
+{
+	@Autowired
+	private SurveyService surveyService;
+	..
+	..
+	@RequestMethod("/surveys/{surveyId}/questions")
+	public List<Question> retrieveAllSurveyQuestions(@PathVariable String surveyId)
+	{
+		List<Question> questions  = surveyService.retrieveAllSurveyQuestions(surveyId);
+		if(questions==null)
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		return questions;
+	}
+	@RequestMethod("/surveys/{surveyId}/questions/{questionId}")
+	public Question retrieveSpecificSurveyQuestion(@PathVariable String surveyId,@PathVariable String questionId)
+	{
+		Question question = surveyService.retrieveSpecificSurveyQuestion(surveyId,questionId);
+		if(question==null)
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		return question;
+	}
+
+}
+
+
+
+
+@Service
+public class SurveyService 
+{
+	..
+	..
+	..
+	
+	public Survey retrieveSurveyById(String surveyId)
+	{
+		Predicate<? super Survey> predicate = survey->survey.getId().equalsIgnoreCase(surveyId);
+		Optional<Survey> optionalSurvey=surveys.stream().filter(predicate).findFirst();
+		if(optionalSurvey.isEmpty())
+			return null;
+		return optionalSurvey.get();
+	}
+	public List<Question> retrieveAllSurveyQuestions(String surveyId)
+	{
+		Survey survey = retrieveSurveyById(surveyId);
+		if(survey==null)
+			return null;
+		return survey.getQuestions();
+	}
+
+	public Question retrieveSpecificSurveyQuestion(String surveyId,String questionId)
+	{
+		Survey survey =  retrieveSurveyById(surveyId);
+		List<Question> questions=survey.getQuestions();
+		if(questions==null)
+			return null;
+		Predicate<? super Question> predicate = question->question.getId().equalsIgnoreCase("questionId");
+		Optional<Question> optionalQuestion = questions.stream().filter(predicate).findFirst();
+		if(optionalQuestion.isEmpty())
+			return null;
+		return optionalQuestion.get();
+	}
+
+}
 
 
 
