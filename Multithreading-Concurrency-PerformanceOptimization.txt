@@ -72,16 +72,56 @@ themselves.
 
 
 Now, let's see how operating system decides when to run which thread and when to perform context Switch.
-Let's we have four threads 
-Music Player ui 
-Music Player 
-Text Editor UI 
-File Saver
+Let's we have four threads (length order decreasing)
+Music Player ui (3)
+Music Player (2)
+Text Editor UI (4)
+File Saver (1)
+
 
 
 Suppose cpu is  Scheduling threads on the basis of first come first serve
 Problem: Long thread(suppose file saver is long thread) can cause starvation for other thread.
 May cause UI threads being unresponsive - Bad User Experience
+
+Suppose cpu is Scheduling threads on the basis of shortest job first
+This has also a Problem. There are user related events coming to our system all the time, so we keep Scheduling shortest job first all the time, the longer tasks that 
+involves computation will never be executed. 
+
+Now, we understand the tradeoffs and challenges with Scheduling threads. Let's learn how it really works in most operating systems. In general operating system divides 
+the time into moderately sized pieces called epochs. In each epoch, the operating system allocates a different time slice for each thread. Not all the threads get to run or 
+complete in each epoch. The decision on how to allocate the time for each thread is based on the dynamic priority the operating system maintains for each thread.
+
+Dynamic priority  = Static priority + bonus
+    (bonus can be negative)
+
+Static priority is set by the developer programmatically
+Bonus is adjusted by the operating system in every epoch for each thread. 
+
+Using dynamic priority, the OS will give preference for Interactive threads (such as User Interface threads)
+OS will give preference to threads that did not complete in the last epoch or did not get enough time to run - preventing starvation.
+
+
+
+When to prefer multithreaded architecture 
+> Prefer if the tasks share a lot of data.
+> switching between threads of the same process is faster (shorter context switching)
+
+When to prefer multiprocess architecture
+> Security and stability is of higher priority. (Suppose one thread bring down the entire app)
+> Tasks are unrelated to each other. 
+
+
+
+*******************************************************************
+Section 2: Threading Fundamentals - Thread Creation
+Thread Creation - Part 1, Thread Capabilities & Debugging
+*******************************************************************
+Lecture Agenda
+-------------------
+Thread Creation with java.lang.Runnable
+Thread class capabilities 
+Thread Debugging
 
 
 
