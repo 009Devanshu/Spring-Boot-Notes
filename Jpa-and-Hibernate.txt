@@ -93,6 +93,53 @@ logging.level.org.hibernate.type=trace							(I want to see what parameters are 
 
 spring.jpa.defer-datasource-initialization=true
 
+
+
+
+---------------------------------------------------------------------------------
+Step 05: Writing Unit Test for findById method
+----------------------------------------------------------------------------------
+src/test/java
+	com.in28minutes.jpa.hibernate.demo;
+		@SpringBootTest
+		class DemoApplicationTests {
+
+			@Test
+			void contextLoads() {
+			}
+
+		}
+
+	com.in28minutes.jpa.hibernate.demo.repository
+		@SpringBootTest
+		class CourseRepositoryTest {
+
+			
+			@Autowired
+			CourseRepository repository;
+			@Test
+			void findById_basic() {
+				Course course =  repository.findById(10001L);
+				assertEquals("JPA in 50 steps",course.getName());
+			}
+
+		}
+
+
+
+------------------------------------------------------------------------------
+Step 06: Writing a deleteById method to delete an Entity
+------------------------------------------------------------------------------
+
+
+	
+
+
+
+
+
+
+
 		
 
 
