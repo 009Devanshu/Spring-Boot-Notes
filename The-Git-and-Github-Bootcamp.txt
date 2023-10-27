@@ -168,6 +168,48 @@ Note: git add . (stages all changes at once)
 
 
 
+-----------------------------------------------------------
+Git Documentation
+----------------------------------------------------------
+It has reference manual. Their book is great.
+
+
+---------------------------------------------------
+Keep Your commits Atomic
+---------------------------------------------------
+When possible, a commit should encompass a single feature, change or fix. In other words, try to keep each commit focussed on a single thing.
+This makes it much easier to undo or rollback changes later on. It also makes your code or project easier to review.
+
+
+---------------------------------------------------
+Commit messages Present or Past
+---------------------------------------------------
+Git doc recommmends to use Imperative sentence. Someone said that people should use Imperative sentence because git sometimes generates its own message. But, the 
+community is split on this debate.
+
+
+--------------------------------------------------
+A closer look at Git log command 
+--------------------------------------------------
+>git log --abbrev-commit        (We are getting small piece of hashes)
+>git log --oneline
+
+(You can go for more. Git Documentation >> reference manual >> log >> formatting_commit)
+
+
+
+-----------------------------------------------------
+Committing with a Gui
+-----------------------------------------------------
+First Click on Stage, Write commit and click the button. (Just Simple)
+
+
+
+-------------------------------------------------------
+Amending Commits 
+-------------------------------------------------------
+Suppose you just made a commit and then realized you forgot to include a file! or maybe you made a typo in the commit message that you want to correct. 
+Rather than making a brand new separate commit. You can "redo" the previous commit using the --amend 
 
 
 
