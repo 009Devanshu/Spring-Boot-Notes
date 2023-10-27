@@ -1,0 +1,229 @@
+----------------------------------------
+Configuring Your Git Name and Email
+----------------------------------------
+
+People would be able to know who did what when they will go through checkpoints. Configure Email as with the github account.
+>git config --global user.name "Devanshu"
+(>git config --global user.name ==> It will show the name if you have already configured the name)
+We will do the same process for Email
+>git config --global user.email "devg789123@gmail.com"
+
+To override the previous name or email, just run the command again. It will override the previous ones.
+
+
+-----------------------------------
+Installing GitKraken
+-----------------------------------
+https://www.gitkraken.com/
+Git Registration
+Username: Devanshu
+Email: devg789123@gmail.com
+Password: deepthemazic
+
+
+
+-------------------------
+Navigation
+-------------------------
+When we open Git Bash, we are in Home directory and it is symbolized with ~
+>ls 
+It lists all the files and folders present in the current directory.
+
+To open the current directory, 
+>open .     (for mac)
+>start .    (for windows)
+
+ls shows all the folders and files present in current directory. If we want to know inside a particular folder in that directory
+>ls <folder name>
+
+We can also open a particular folder present in directory--
+>open <folder name>     (for mac)
+>start <folder name>    (for windows)
+
+If a folder(y) is present inside a folder(x) which is present in the current directory and you want to see content present in folder y--
+ls x/y
+
+
+
+--------------------------------
+pwd (Print Working directory)
+--------------------------------
+-------------------------------
+cd (change directory)
+-------------------------------
+cd ..   (Go back one level)
+
+
+
+
+
+-----------------------------------------------------------------------
+Creating Files and Folders 
+-----------------------------------------------------------------------
+To Create File:
+touch <file_name.extension_name>
+
+We can create multiple files in one go: 
+touch <file_name.extension_name> <file_name.extension_name>
+
+To Create directory:
+mkdir <folder_name>
+
+
+
+---------------------------------------------------------
+Deleting Files and Folders
+---------------------------------------------------------
+To Delete a file:
+>rm <file_name> (This permanently deletes the file, not in recycle bin)
+We can delete multiple files in one go 
+
+To Delete a particular folder:
+>rm -rf <folder_name>   (It is gone forever)
+
+Note: ls -a (Shows all the files including hidden files)
+
+
+
+
+-----------------------------------------------------------
+git init and git status
+-----------------------------------------------------------
+git init initialize empty git repository or reinitialize an existing one. (create .git folder)
+.git tracks all the history of repository.
+
+
+-----------------------------------------------------------------------
+A Common Early Git Mistake
+-----------------------------------------------------------------------
+When we do git init. Then git is going to watch everything in the currest directory as well as nested directory.
+Suppose we have git repo MyFirstNovel
+
+If we create another folder inside it, let's say Intro--
+/Basics/MyFirstNovel (master)
+>mkdir Intro
+>cd Intro
+
+/Basics/MyFirstNovel/Intro (master) (You can see that I did not initialize Intro, but it seems like git is tracking Intro directory also)
+We can check git status
+
+If we make another directory inside Intro, it will also be tracked.So, here is the warning--
+warning: Do not initialize repo inside of a repo.
+Before running git init, use git status to verify that you are not currently inside of a repo.
+If we initialize inside directory again. In that case, it will be confusing and it would be like git tracking git.
+
+Let's create a directory inside Basics and initialize that.
+
+Conclusion: Make one repo per project.
+
+
+
+-----------------------------------------------------------------------
+The Committing Workflow Overview
+-----------------------------------------------------------------------
+
+
+The Basic Workflow:
+----------------
+Work On Stuff (Make new files, edit files, delete files etc)----->Add Changes (Group specific Changes together,in preparation of committing)---->Commit(Commit everything that was previously added)
+
+
+
+
+-----------------------------------------------------------------------
+Staging Changes with Git Add 
+-----------------------------------------------------------------------
+Let's say in our working directory, we have 7 files 
+deleted team.html
+modified about.html
+modified about.css 
+created navbar.html 
+created navbar.css 
+created navbar.js 
+created logo.jpg
+
+We can stage first three files together (git add team.html about.html about.css) and then commit them.
+After that we can stage last four files (git add navbar.html navbar.css navbar.js logo.jpg) and then commit them.
+
+
+
+
+
+
+----------------------------------------------------------
+Finally, the git commit command
+----------------------------------------------------------
+Running 'git commit' will commit all staged changes. It also opens a text editor and prompts you for a commit message. So, write message along with 'git commit' 
+>git commit -m "Your_message"
+
+
+
+----------------------------------------------------------
+The Git Log Command (And more committing)
+----------------------------------------------------------
+>git log 
+It returns log of commits 
+
+Note: git add . (stages all changes at once)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
