@@ -509,15 +509,19 @@ We use the same command but git may not be able to do it automatically for us. I
 For example, what happens if on the master branch my partner edited line 59 of a file and on the bugfix branch i edited same line to be something else. Which one wins when there is a conflict. (Well we will address this thing in the next video). For now, we are going to show where we don't arrive at conflict and  git is able to make the merge for us automatically. So, what happens in these scenarios when it is not a fast-forward merge. Git performs a "merge commit". We end up with a new commit on the master branch. Git will prompt you for a message (to override git generated message).
  This new merge commit actually two different parent commits. (Remember: Every commit has parent) (See slides for more visualization)
 
-
+Question: Give an example of merge which is not fast-forward merge but it does not do any conflict.
+We create a new branch from master branch. We do some changes in the existing file and commit. On the other hand, another person in master branch 
+create another file and commit. When i switch to master branch and merge. It is not a fast-forward merge. 
 
 
 ----------------------------------
 Oh No! Merge Conflicts!
 ----------------------------------
 Conflicting Changes:
-On one branch, somebody modified a file and on the second branch that we are merging, somebody deleted the same file.
-My teammate edited line 77 of file on on the branch and I edited same line of the same file in different branch. Now, git will not automatically allow to merge these branches. We have to manually resolve them. 
+1)On one branch, somebody modified a file and on the second branch that we are merging, somebody deleted the same file.
+2)My teammate edited line 77 of file on on the branch and I edited same line of the same file in different branch. Now, git will not automatically allow to merge these branches. We have to manually resolve them. 
+
+
 
 How to fix this: 
 >Conflict (content): Merge conflict in blah.txt 
@@ -546,7 +550,7 @@ Using VSCode To resolve conflictts
 
 
 
-
+Note: Use "code ." to open file.
 
 
 
