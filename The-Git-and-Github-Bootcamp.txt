@@ -540,17 +540,181 @@ Whenever you encounter merge conflicts, follow these steps to resolve them:
 Resolving Merge Conflicts 
 ------------------------------------
 
-
-
-
-
 ---------------------------------------
 Using VSCode To resolve conflictts
 ---------------------------------------
 
-
-
 Note: Use "code ." to open file.
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+**************************************************
+Section 8: Comparing Changes with Git Diff 
+**************************************************
+
+------------------------------------
+Introducing The Git Diff Command
+------------------------------------
+
+We can use Git Diff command to view changes between commits, branches, files, our working directory and more!
+We often use Git Diff along alongside commands like git status and git log, to get a better picture of a repository and how it has changed 
+over time.
+
+Suppose you have done a lots of changes and you don't know exactly what changes did you make (It is before staging). Here comes the git diff. 
+git diff lists all the changes in our working directory that are not staged for the next commit.
+
+>git diff 
+Comparing Staging area and Working directory.
+
+
+
+----------------------------------------
+A guide to Reading Diffs 
+----------------------------------------
+
+Compared Files:
+For each comparison, Git explains which file it is comparing. Usually, this is two versions of the same file. 
+Git also declares one file as "A" and the other as "B".
+diff --git a/rainbow.txt b/rainbow.txt
+
+File Metadata 
+You really don't need to care about the file metadata. The first two numbers are the hashes of the two files being compared. The last 
+number is an internal file mode identifier.
+index 72d1d5a...f2c8117 100644
+
+Markers:
+File A and File B are each assigned a symbol.
+    -File A gets a minus sign (-)
+    -File B gets a plus sign (+)
+--- a/rainbow.txt 
++++ b/rainbow.txt 
+
+
+Chunks:
+A diff won't show the entire contents of a file, but instead only shows portions or Chunks that were modified.
+A chunk also includes  some unchanged lines before and after a change to provide some context.
+
+@@ -3,4 +3,5 @@ orange          (This is called chunk header)
+yellow 
+green 
+blue 
+-purple
++indigo 
++violet
+
+
+-3,4 is from file a and +3,4 is from file b. 
+-3 and +3 shows chank is starting from line number 3 of the files a and b respectively.
+Chunk Header:
+Fron file a, 4 lines are extracted starting from line 3. 
+From file b, 5 lines are extracted starting from line 3.  (Go to pdf to visualize more)
+
+
+
+
+----------------------------------------
+Viewing Unstaged Changes 
+----------------------------------------
+
+Withour addtional options, git diff lists all the changes in our working directory that are not staged for the next commit. 
+>git diff 
+Comparing working directory and staging area. 
+
+
+
+
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+git diff HEAd lists all changes (staged as well as unstaged) in the working directory since your last commit. 
+>git diff HEAD 
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+----------------------------------------------
+Viewing Staged Changes 
+----------------------------------------------
+
+git diff --staged or --cached will list the changes between the staging area and our last commit. 
+"Show me what will be included in my commit if i run git commit now.
+>git diff --staged 
+>git diff --cached 
+
+
+
+
+----------------------------------------------
+Diffing specific files
+----------------------------------------------
+
+Diffing specific files :
+We can view the changes within a specific file by providing git diff with a file name
+>git diff HEAD [filename]
+>git diff --staged [filename]
+
+
+----------------------------------------------
+Comparing Changes across Branches
+----------------------------------------------
+
+Comparing Branches :
+git diff branch1..branch2 will list the changes between the tips of branch1 and branch2
+>git diff branch1..branch2 
+
+
+
+----------------------------------------------
+Comparing Changes across Commits
+----------------------------------------------
+
+
+
+Comparing commits :
+To compare two commits, provide git diff with the commit hashes of the commits in question.
+>git diff commit1..commit2
+
+
+
+
+----------------------------------------------
+Visualizing Diffs with GUI
+----------------------------------------------
+
+
+----------------
+Exercise:
+---------------
+It is one of the question from exercise to to understand git diff between current head and previous head--
+Question: Switch over to the current branch if you are not currently on it.   Run a diff to compare the current HEAD to the previous commit (you could use the commit hash or reference HEAD's parent commit)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
