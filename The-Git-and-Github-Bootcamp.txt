@@ -692,7 +692,275 @@ Visualizing Diffs with GUI
 Exercise:
 ---------------
 It is one of the question from exercise to to understand git diff between current head and previous head--
-Question: Switch over to the current branch if you are not currently on it.   Run a diff to compare the current HEAD to the previous commit (you could use the commit hash or reference HEAD's parent commit)
+Question: Switch over to the current branch if you are not currently on it. Run a diff to compare the current HEAD to the previous commit (you could use the commit hash or reference HEAD's parent commit)
+Answer: 
+>git diff HEAD HEAD~1
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+****************************************
+Section 9: The INS and OUTS of Stashing
+****************************************
+
+-------------------------------
+Why we need git stash?
+-------------------------------
+I am on master. I make some commits and then make a new branch and  switch over to that branch(It is called puppy). And I do some more work over here and then I have some uncommitted work on this puppy (Meaning we did not stage changes for commit). What happens when I switch back to master? 
+There are two options: 
+1. My changes come with me to the destination branch. 
+2. Git won't let me switch if it detects potential conflicts.(It will show a message as we did previously)
+
+
+Demonstration for first option--
+1. We create Stashing folder, declared it as a repository. I am on master branch. I made two files app.css and index.html and wrote some code in index.html--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello!</title>
+    <link href="app.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Hello World!!</h1>
+    <p1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia facilis consequatur aperiam, beatae reprehenderit maxime tenetur et deleniti dolores! Aut repellat officiis numquam neque nam nostrum veniam qui soluta voluptate.</p1>
+</body>
+</html>
+
+2. Made a new branch purple and switch to it. I add some code in app.css--
+h1{
+    color: purple;
+}
+body{
+    background-color: lavender;
+}
+
+But, i did not staged this change in app.css for commit. If I git log in purple branch. 
+
+commit cd991bed40df9a1bf2e18b886cd9aade1aef96d8 (HEAD -> purple, master)
+Author: Devanshu <devg789123@gmail.com>
+Date:   Mon Oct 30 18:50:22 2023 +0530
+
+    create index.html and app.css
+
+Now, I switched to master branch and checked git status: 
+it will show unstaged change that we did in purple branch--
+..
+..
+ modified:   app.css
+..
+..
+
+
+
+Demonstration for second scenario:
+1. I am on master branch. Create another branch goodbye. In master branch, I made some changes in index.html and commit them--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello!!!!!!!!!!!!!!</title>
+    <link href="app.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Hello World!!!!!!!!!!!!!!!!!!</h1>
+    <p1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia facilis consequatur aperiam, beatae reprehenderit maxime tenetur et deleniti dolores! Aut repellat officiis numquam neque nam nostrum veniam qui soluta voluptate.</p1>
+</body>
+</html>
+
+2.
+Now, i switch to purple branch I made some changes in index.html and also added code in app.css--
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodbye!</title>
+    <link href="app.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Goodbye World!!</h1>
+    <p1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia facilis consequatur aperiam, beatae reprehenderit maxime tenetur et deleniti dolores! Aut repellat officiis numquam neque nam nostrum veniam qui soluta voluptate.</p1>
+</body>
+</html>
+
+
+I am not staging them for commit. Now, If I want to switch to master branch, git will not allow to do that due to conflicts--
+
+$ git switch master
+error: Your local changes to the following files would be overwritten by checkout:
+        index.html
+Please commit your changes or stash them before you switch branches.
+Aborting
+
+(Oh boy! I want to switch, but how can I do that. That's what we gonna learn in the next video)
+
+
+------------------------------------------
+Stashing Basics: Git Stash save and pop
+------------------------------------------
+
+Git provides an easy way of stashing these uncommitted changes so that we can return to them later, without having to make unnecessary commits.
+
+git stash is super useful command that helps you save changes that you are not yet ready to commit. You can stash changes and then come back to them later.
+Running git stash will take all uncommitted changes (staged and unstaged) and stash them, reverting the changes in your working copy.
+>git stash 
+You can also use git stash save instead
+
+Use git stash pop to remove the most recently stashed changes in your stash and re-apply them to your working copy.
+>git stash pop
+
+------------------------------
+Practicing with Git Stash
+------------------------------
+
+>git stash
+Saved working directory and index state WIP on goodbye: 94eklj create index.html and app.css
+(Here, index state is referred to staged state)
+
+Now, if we run git status, we can see --  
+$ git status
+On branch goodbye
+nothing to commit, working tree clean
+
+We can see the files and any change is removed. (revert back). Now, we can switch to any branch and do whatever we want and after that we can switch to goodbye branch and run :
+> git stash pop
+
+
+---------------------------------------
+git stash apply
+---------------------------------------
+You can use git stash apply to apply whatever is stashed away, without removing it from the stash. This can 
+be useful if you want to apply stashed changes to multiple branches. It will take whatever in the stash and apply it in the same way that pop does. Except, with apply the stash 
+stays in the stash. In other words, the changes are still in the stash and we can apply them in multiple places versus with pop changes are removed from the stash after they 
+are applied. 
+
+Demonstration:
+1. I am on master branch. I create another branch goodbye. I come back to my master branch and  in master branch, I  made some changes in index.html and commit them. 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello!!!!!!!!!!!!!!</title>
+    <link href="app.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Hello World!!!!!!!!!!!!!!!!!!</h1>
+    <p1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia facilis consequatur aperiam, beatae reprehenderit maxime tenetur et deleniti dolores! Aut repellat officiis numquam neque nam nostrum veniam qui soluta voluptate.</p1>
+</body>
+</html>
+
+Now, our goodbye branch does not have that commit --
+2.
+Now, i switch to purple branch I made some changes in index.html and also added code in app.css--
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodbye!</title>
+    <link href="app.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Goodbye World!!</h1>
+    <p1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia facilis consequatur aperiam, beatae reprehenderit maxime tenetur et deleniti dolores! Aut repellat officiis numquam neque nam nostrum veniam qui soluta voluptate.</p1>
+</body>
+</html>
+
+
+h1{
+    color: purple;
+}
+body{
+    background-color: lavender;
+}
+
+
+I am not staging them for commit. Now, If I want to switch to master branch, git will not allow to do that due to conflicts--
+
+$ git switch master
+error: Your local changes to the following files would be overwritten by checkout:
+        index.html
+Please commit your changes or stash them before you switch branches.
+Aborting
+
+
+I can use git stash apply, now changes will be in stash. But those changes can be apply in other branches as well without popping up them in the current branch (So, no chance of conflicting while switching to other 
+branch). 
+
+Now, go to master branch and >git stash apply. Come back to goodbye branch and you can reapply them using either >git stash apply or >git stash pop.
+
+
+
+
+-----------------------------------------
+Working with multiple stashes
+----------------------------------------
+You can add multiple stashes onto the stack of stashes. They will all be stashed in the order you added them.
+>git stash
+    do some other stuff...
+>git stash 
+    do some other stuff... 
+>git stash 
+
+
+
+We can view whatever is in the stash 
+>git stash list
+stash@{0}: WIP on rainbow: 810da1f remove background color
+stash@{1}: WIP on rainbow: 810da1f remove background color
+stash@{2}: WIP on rainbow: 810da1f remove background color
+
+
+Applying specific stashes:
+git assumes you want to apply the most recent stash when you run git stash apply, but you can also specify a particular stash like 
+>git stash apply stash@{2}
+
+
+
+
+-------------------------------------------
+Dropping And Clearing The Stash 
+-------------------------------------------
+To delete a particular stash, you can use 
+>git stash drop <stash-id>
+
+Note: If you are using >git stash pop, you are removing the most recent stash.
+      If you are using >git stash apply <stash-id>, you are not removing that stash. 
+
+
+Clearing the Stash 
+>git stash clear 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
