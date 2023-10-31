@@ -1014,19 +1014,79 @@ Rather than typing HEAD, you can substiture -- followed by the file(s) you want 
 
 
 
+------------------------------------------------
+Un-modifying with Git Restore 
+------------------------------------------------
+
+Un-Modifying files with Restore --
+Suppose you've made some changes to a file since your last commit. you have saved the file but then realize you definitely do NOT want those changes anymore!
+To restore the file to the contents in the HEAD, use 
+>git restore <file-name>
+Note: The above command is not "undoable" if you have uncommitted changes in the file, they will be lost!
 
 
 
+This command is same as we did earliear --
+>git checkout HEAD <file-name> or >git checkout -- <file-name>
+
+
+git restore <file-name> restores using HEAD as the default source, but we can change that using the --source option.
+For example, git restore --source HEAD~1 home.html will restore the contents of home.html to its state from the commit prior to HEAD. You can also use a particular commit hash as the source. 
+>git restore --source HEAD~1 app.js
 
 
 
+Note:
+Suppose, you do >git restore --source HEAD~2 dog.txt 
+If you git log, you will see HEAD is not detached. And if you do git status. You can see changes are not staged.That means if you stage and commit at this time, a new commit will be created ahead of HEAD and HEAD will move forward. Instead of committing if you do, git restore dog.txt, You will back to restore the dog.txt at the last commit.
+
+
+In Case of >git checkout HEAD~2 dog.txt, changes are staged but not committed. HEAD is also not detached (Now, you can imagine everything). (If you do git restore dog.
+txt, nothing will happen because >git restore undo changes which are not staged) 
+Note: If you do >git checkout HEAD~2, HEAD is detached.
 
 
 
+-----------------------------------------
+Un-Staging Changes with Git Restore
+-----------------------------------------
+
+If you have accidentally added a file to your staging area with git add you don't wish to include it in the next commit, you can use git restore to remove it from staging. 
+Use the --staged option like this:
+>git restore --staged app.js
 
 
 
+-----------------------------------
+Undoing Commits With Git Reset 
+-----------------------------------
+Suppose you have just made a couple of commits on the master branch, but you actually meant to make them on a separate branch instead. To undo those commits, you can use git reset. 
+git reset <commit-hash> will reset the repo back to a specific commit. The commits are gone. 
+>git reset <commit-hash>
 
+Suppose you made change and made a commit. You made another change and another commit. After that you realized you should not have to do those commits. You reset commits-
+>git reset <commit-hash 2 steps back>
+But, if you see in the file, you can see those changes (Ofcourse they are not staged). So, 
+git reset <commit-hash> is plain reset.
+Note: You can undo changes using >git restore <file-name>
+Another way to undo those changes in master branch, create a new branch and switch to it. Those changes will come to new branch. You can add and commit those changes. When you switch to master branch, you can see those changes are gone.
+
+
+Reset --hard 
+If you want to undo both the commits AND the actual changes in your files, you can use the --hard option.
+for example, git reset --hard HEAD~1 will delete the last commit and associated changes.
+>git reset --hard <commit> 
+
+
+---------------------------------------
+Reverting Commits With...Git Revert 
+---------------------------------------
+git revert is similar to git reset in that they both "undo" changes, but they accoplish it in different ways. 
+git reset actually moves the branch pointer backwards, eliminating commits. 
+git revert instead creates a brand new commit and in that new commit it undoes the changes from earlier commit, you will be prompted to enter a commit message.
+>git revert <commit-hash>
+
+(Go for pdf for more clarity if you want)
 
 
 
