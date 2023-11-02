@@ -303,8 +303,7 @@ Use git switch with the -c flag to create a new branch AND switch to it all in o
 --------------------------------------------------
 Switching Branches with unstaged changes?
 --------------------------------------------------
-If we do any modification in a  branch(parent), We will need to stage and commit those modifications. Otherwise, we can not switch to any sub-branch of the branch. Reverse is also true since we are modifying in the existing file. But, if we create a new file in sub-branch, then we can move to its parent branch without staging and 
-committing. 
+Suppose there is a master branch, we create two branches one is pizza and second one is popsickle. In master branch, we create a file songs.txt and add some songs and commit them. Now, we switch to branch pizza and add some songs, but we don't stage and commit them and try to switch to popsickle branch, then git will not  allow to do that (Atleast in one of the situations that I see)--
 
 $ git switch emptyplaylist
 error: Your local changes to the following files would be overwritten by checkout:
@@ -312,7 +311,7 @@ error: Your local changes to the following files would be overwritten by checkou
 Please commit your changes or stash them before you switch branches.
 Aborting
 
-
+But If we add a new file in pizza, then switch to popsickle, git allow to do that because It is a new file. 
 
 ---------------------------------------------------
 Deleting & Renaming Branches

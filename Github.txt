@@ -1,0 +1,354 @@
+*****************************************
+Cloning Github Repos with Git Clone
+*****************************************
+>git clone <url>
+Make sure you are not inside of a repo when you clone!
+
+
+*****************************************
+Cloning Non-Github Repos
+*****************************************
+It can clone any hosted repo--
+>git clone <url> is independent of any cloud-based repo.
+
+Permission?
+Anyone can clone a repository from Github, provided the repo is public (If it is private, you will not be able to see it). You do not need to be an owner or collaborator to 
+clone the repo locally to your machine. You just need the URL from Github.
+Pushing up your own changes to the Github repo that somebody owns...that's another story entirely! You need permission to do that.
+
+
+*******************************************
+Github Setup: SSH Config
+*******************************************
+It is good to use same email address in Github that you have already configured in Git. That makes github to identify who you are.
+
+Creating an Account on Github:
+After you submit Username, Email address, Password and press 'Create Account' is to configure SSH key.
+
+SSH Keys
+You need to be authenticated on Github to do certain operations, like pushing up code from your local machine. Your terminal will prompt you every single time for your Github email and password unless...
+You generate and configure an SSH key! Once configured, you can connect to Github without having to supply your username/password.
+
+Check if SSH key is already generated--
+>Google > Github SSH Key > Official docs > See the instructions
+
+Generating SSH Key--
+Go to official docs
+
+
+*************************************
+Creating Our First Github Repo!
+*************************************
+
+How Do I Get My Code On Github?
+-------------------------------------
+Option 1:
+Existing Repo
+
+If you already have an existing repo locally that you want to get on Github...
+- Create a new repo on Github
+- Connect your local repo (add a remote)
+- Push up your changes to Github
+
+Option 2: 
+Start From Scratch 
+
+if you haven't begun work on your local repo, you can...   
+- Create a brand new repo on Github
+- Clone it down to your machine
+- Do some work locally 
+- Push up your changes to Github
+(Here, no need to connect manually from local repo to my github repo)
+
+
+*****************************************
+A Crash Course on Git Remotes
+*****************************************
+Remote 
+Before we can push anything up to Github, we need to tell Git about our remote repository on Github. We need to setup a "destination" to push up to. 
+In Git, we refer to these "destination" as remotes.Each remote is simply a URL where a hosted repository lives.
+
+Viewing Remotes--
+>git remote or >git remote -v
+
+
+Adding A New Remote--
+-----------------------
+A remote is really two things: a URL and a label. To add a new remote, we need to provide both to Git.
+>git remote add <name> <url>
+Hey, Git this is the url I am calling with a   name.
+
+>git remote add origin https://github.com/blah/repo.git
+origin is pretty standard or is mostly widely used.
+Okay Git, anytime I use the name "origin", I'm referring to this particular Github repo URL. 
+
+Other Commands--
+They are not commonly used, but there are commands to rename and delete remotes if needed.
+git remote rename <old> <new>
+git remote remove <name>
+
+
+****************************************
+Introducing Git Push 
+****************************************
+
+Pushing
+---------
+We need to specify the remote we want to push up to AND the specific local branch we want to push up to that remote.
+>git push <remote> <branch>
+
+
+
+
+
+************************************
+Touring A GitHub Repo 
+************************************
+
+
+************************************
+A Closer Look At Git Push 
+************************************
+
+When we do 
+>git push origin master
+We push local master branch to remote master branch. 
+We can see message after running this command--
+        master -> master
+
+But, we can push our local branch to another remote branch--
+>git push <remote> <local-branch>:<remote-branch>
+Example: 
+>git push origin pancake:wafle
+
+
+*****************************************
+What does "git push -u" mean?
+*****************************************
+The -u option allows us to set the upstream of the branch we're pushing. You can think of this as a link connecting our local branch to a branch on Github.
+
+Once we've set the upstream for a branch, we can use the git push shorthand which will push our current branch to the upstream.
+>git push -u origin master 
+Next time we push...
+>git push 
+
+
+****************************************
+Another Github Workflow: Cloning First
+****************************************
+
+
+****************************************
+Main & Master: GitHub Default Branches
+****************************************
+Suppose, You are creating repo in Github, If you add readme file, It will automatically create branch main. After that you can clone it to your local machine. And you can work in your local repo. In local repo (In gitbash), it will show branch main.
+
+Second Case:
+You are already working in a local repo. Now your company has decided to change name from master to main. You can change that and then push  it--
+>git branch -M main 
+>git push origin main 
+
+Now, if you see in github account, you can see both master and main, where master is seen default.
+You can make main as default in your github account from settings. 
+
+
+**********************************************************************
+Section 12: Fetching And Pulling
+**********************************************************************
+
+------------------------------------------
+Remote Tracking Branches: WTF Are They?
+------------------------------------------
+
+(Refer to slide for more visualization)
+
+When we clone a repository from Github: 
+If we do git log, we can see a regular branch reference. I can move this around myself. Another we get is a "Remote Tracking Branch". It's is a reference to the state of the master branch (It can be any other branch) on the remote. I can't move this myself. It's like a bookmark pointing to the last known commit on the master branch on origin.
+
+At the time you last communicated wiht this remote repository, here is where x branch was pointing.
+They follow this pattern <remote>/<branch>
+    - origin/master references the state of the master branch on the remote repo named origin.
+    - upstream/logoRedisign references the state of the logoRedisign branch on the remote named upstream (a common remote name)
+
+Run git branch -r to view the remote branches our local repository knows about. 
+>git branch -r 
+
+
+---------------------------------------
+Checking out remote tracking branches
+---------------------------------------
+If we make commits in our local repo, the local branch reference moves according to that. But, remote reference does not move.
+
+You can do git status and you will see message like this--
+>git status
+ On branch master 
+ Your branch is ahead of 'origin/master' by 2 commits
+    and blah blah blah
+
+ (Here branch can be any and number of commits could be any)   
+ The point is you can identify where is your current branch reference or where you are currently with reference to origin/master. You can checkout the different between the project when it was at origin/master and when it is currently referencing to branch reference using 
+ >git checkout origin/master
+
+ But if we move to current branch reference and push to the remote origin. If we do >git status, we can see 
+ On branch main
+ Your branch is up to date with 'origin/main'
+
+
+ ----------------------------------------------------
+ Working With Remote Branches
+ ----------------------------------------------------
+ Suppose I clone remote repository having multiple branches and  the default branch of this repo is main branch. After cloning, if we run 
+ >git branch in our local repo. I will see only main branch. Then, how could I work on other branch if I want.
+
+ Once we have cloned a repository, we have all the data and Git history for the project. The github repo has other branches suppose puppies branch, but when I run git branch I don't see it on my machine! All I see is the master branch. What's going on?
+ But, If I do >git branch -r 
+ We can see all the remote branches.
+ origin/HEAD -> origin/main 
+ origin/puppies
+
+ Basically, our master branch is connected to origin/main automatically.But, I want to work on the puppies branch locally!
+
+ I could checkout origin/puppies, but that puts me in detached HEAD.
+ I want my own local branch called puppies, and I want it to be connected to origin/puppies, just like my local master branch is connected to origin/master.
+ 
+ It's super easy!
+ Run git switch <remote-branch-name> to create a new local branch from the remote branch of the same name.
+ >git switch puppies      makes me a local puppies branch AND sets it it up to track the remote branch origin/puppies.
+
+
+
+ --------------------------------------------
+ Git Fetch: The Basics
+ --------------------------------------------
+ Watch Slides 
+ Fetching allows us to download changes from a remote repository, BUT those changes will not be automatically integrated  into our working files. It lets you see what others have been working on, without having to merge those changes into your local repo.
+ Think of it as "please go and get the latest information from GitHub, but don't screw up my working directory".
+ The git Fetch <remote> command fetches branches and history from a specific remote repository.
+ git fectch origin will fetch all the changes from the origin remote repository.
+ If not specified, <remote> defaults to origin.
+
+ We can also fetch a specific branch from a remote using 
+ git fetch <remote> <branch>
+ For Example, git fetch origin master would retrieve the latest information from the master branch on the origin remote repository.
+
+ >git fetch origin master 
+ I now have those changes on my machine, but if I want to see them I have to checkout origin/master. My master branch is untouched.
+
+
+ -------------------------------------------
+ Demonstrating Git Fetch 
+ ------------------------------------------
+ Suppose someone modified or add something in movies branch in remote repository. If you switch to movies branch in local repository and use >git status, It will say 
+ On branch movies 
+ Your branch is upto date with 'origin/movies'
+
+ But I want to fetch changes from remote repo--
+ >git fetch origin
+ >git status 
+ On branch movies
+ Your branch is behind 'origin/movies' by 1 commit, and can be fast-forwarded.
+    (use "git pull" to update your local branch)
+ 
+ nothing to commit, working tree clean
+
+If you do git log in your current branch, you do not see new commits because git fetch does not mess with your working directory.
+
+
+You can checkout to origin/movies
+>git checkout origin/movies
+Now you are in detached HEAD.. 
+..
+..
+
+And you can see what are the new changes.
+
+
+Note: If we add new branch in remote repo. Then, we will have to >git fetch in our local repo to let our local repo know the new branch.
+
+
+
+-------------------------------------
+Git Pull: The Basics 
+-------------------------------------
+
+git pull is another command we can use to retrieve changes from a remote repository. Unlike fetch, pull actually updates our HEAD branch with whatever changes are retrieved from the remote.
+"go and download data from Github AND immediately update my local repo with those changes"
+
+git pull=git fetch (update the remote tracking branch with the latest changes from the remote repository) + fit merge (update my current branch with whatever changes are on the remote tracking branch)
+
+
+To pull, we specify the particular remote and branch we want to pull using git pull <remote> <branch>. Just like with git merge, it matters WHERE we run this command from. Whatever branch we run it from is where the changes will be merged into. 
+git pull origin master would fetch the latest information from the origin's master branch and merge those changes into our current branch.
+>git pull <remote> <branch>
+
+Note: pulls can result into merge conflicts!!
+
+
+-------------------------------------------
+Git Pull & Merge Conflicts 
+-------------------------------------------
+
+(For more visualization for slides or video , it is just simple like)
+Note: Before we push anything on github, we should pull (Somebody might have done some work and has pushed new commits to GitHub)
+
+
+----------------------------------------------
+A Shorter Syntax For Git Pull?
+----------------------------------------------
+If we run git pull without specifying a particular remote or branch to pull from, git assumes the following:
+- remote will default to origin 
+- branch will default to whatever tracking connection is configured for your current branch.
+
+
+
+
+
+*****************************************************
+Section 13: GitHub Grab Bag: Odds & Ends
+*****************************************************
+
+---------------------------------------------
+Github Repo Visibility: Public Vs Private 
+---------------------------------------------
+
+
+---------------------------------------------
+Adding GitHub collaborators
+---------------------------------------------
+Addint collaborators means allowing other users to push to the repository. 
+Suppose there is a public repo. They can take that public repo, clone it, make thier own changes and commits, but they can't push them back up to my copy. Nobody can just take over a repo without me granting them permission. I have to grant people collaboration privileges. 
+
+If I add collaborator, then they can collaborate (push) even if the repo is private. But, they don't have settings option.
+
+
+----------------------------------
+GitHub collaboration Demo 
+----------------------------------
+
+
+----------------------------------
+What are READMEs?
+----------------------------------
+
+
+----------------------------------
+A Markdown Crash Course 
+----------------------------------
+READMEs are Markdown files, ending with the .md extension. Markdown is a convenient syntax to generate formatted text. It's easy to pick up!
+
+For More Information-- 
+https://daringfireball.net/projects/markdown/
+
+Github convert Markdown text into HTML.
+
+You can also use this site to learn it-- 
+https://markdown-it.github.io/
+
+You can create README.md from your local repository--
+>touch README.md
+You can write something in VSCode and see preview using MARKDOWN: Open Preview from command pallete. 
+(You might need to add extension for MARKDOWN: Open Preview)
+
+-------------------------------
+Creating GitHub Gists
+-------------------------------
