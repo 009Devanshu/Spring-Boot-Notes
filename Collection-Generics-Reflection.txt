@@ -595,7 +595,254 @@ List<? extends Number> list3 = new ArrayList<Float>():
 
 
 
+==================================
+Lower Bounded Wildcards
+==================================
+printAll(List<? super T>)
+This method can accept a list of any superclass of T.
 
+addItem(List<? super Integer>)
+We can add an Integer to the list without any problem.
+We can add Numbers or even Objects to the list because Numbers and Objects are superclasses of Integers.
+
+You can not read items from a List<? super T> because you can not guarantee what list it is really pointing to - we can read Objects exclusively.
+We can insert subtypes of T into a List<? super T>
+
+
+The below example is just going to work fine--
+----------------------------------------------------
+public static void showAll(List<? super Integer> c) {
+		for(Object n:c) {
+			System.out.println(n);
+		}
+	}
+	
+	public static void main(String[] args) {
+		
+		List<? super Integer> l1 = new ArrayList<Integer>();
+		List<? super Integer> l2 = new ArrayList<Number>();
+		List<? super Integer> l3 = new ArrayList<Object>();
+	}
+	
+But, If I Use Number or any other Class in for loop, it will give error.
+
+
+Now, Inserting into lower bounded wildcard--
+List<? super Number> list = new ArrayList<>();
+list.add(100);
+list.add(100L);
+list.add(100.09);
+//list.add("Hello World"); Not Ok
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+Section 9: Collection Framework
+-------------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------------------------------------------
+How to measure the running time of algorithms?
+--------------------------------------------------
+
+Running Time of Algorithms 
+--------------------------
+It is quite hard to define the running time of a given algorithm- because it depends upon underlying hardware. So, may be measuring the running time is not the best option possible.
+better approach: measure the number of steps instead- how many steps a given algorithm requires with respect to the input. For example: We want to sort an array with N items. How many steps does the given sorting algorithm requires?
+
+O(1)- Constant Running time complexity
+	These algorithms are the fastest approaches: the running time is independent of the N input (number of items)
+	Example: We want to swap two items with known indexes in a given one-dimensional array.
+			 We want to access a particular item of known index from a given array.
+
+O(N)- linear running time complexity
+	These algorithms' running time scale linearly with the N input so the running time increases linearly with the size of the input.
+	if we have 2x the size of the input then the running time will be 2x as well.
+	Example: If we want to find an unknown item in an unsorted one-dimensional array. (linear search)
+			 int[] a = new int[] {5,-4,8,2,1,12}; Suppose we want to find 1.
+			 Linear search will search from the left-hand side one-by-one.
+
+O(logN)- logarithmic running time complexity
+	These algorithms' running time scale logarithmically with the N input so the running time increases logarithmically with the size of the input.
+	Example: If we want to find an unknown item in a sorted one-dimensional array (binary search)
+
+Running Time Complexity--
+O(1)
+O(logN)
+O(N)
+O(NlogN)
+.
+.
+
+O(logN) is close very close to O(1).
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------
+Section 10: Lists 
+--------------------------------------------
+
+-------------------------------
+The List Interface 
+-------------------------------
+-The list interface is an ordered collection that allows us to store and access items in a sequential manner.
+-It extends the Collection interface, Collection extends Iterable interface, so List extends Iterable interface.
+-List can store duplicate elements (while sets can not)
+-It gives the user full visibility and control over the ordering of its elements.
+
+
+List<String> names  = new ArrayList<>();
+names.add("Adam");
+names.add("Kevin");
+names.add("Emily");
+
+Iterator<String> iter = names.iterator();
+while(iter.hasNext())
+	System.out.println(iter.next());
+
+Or we can use forEach loop to iterate names--
+for(String name:names)
+	System.out.println(name);
+
+
+
+----------------------------------------------------------
+What are Arrays?
+----------------------------------------------------------
+
+What is the aim of a data structure?
+The aim is to make operations as fast as possible such as inserting new items or removing given items from the data structure.
+Arrays are data structures where all the items are identified by an index - an integer starting with 0.
+The items of arrays are located right next to each other in the main memory (RAM) - they can be accessed by the index.
+
+Accessing items based on the indexes (random indexing) is the main advantage of array data structures.
+Random Access: Items are located right next to each other so we can get them with the help of the index - in O(1) running time.
+
+The main problem with Arrays is that we have to know the number of items we want to store in advance (static arrays).
+Static Arrays--size of arrays does not change.
+Dynamic Arrays--size of arrays may change dynamically. (Example- ArrayList)
+
+-More complex complex data structures rely heavily on arrays because of random indexing - O(1) access of items with known indexes. 
+Ex- Stacks, Queues and HashTables 
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+Array Operations Visualization
+---------------------------------------------------------------------------------------------------
+
+Array Data Structure 
+------------------------------------
+ADDING ITEMS :-
+----------------
+We can insert new items to the end of the data structure until the data structure is not full - O(1) running time.
+What if the data structure becomes full?
+- have to allocate a larger chunk of memory in the RAM (usually 2x the size of the actual array)
+- have to copy the existing items one by one to the new array.
+- because of these operations: the resize operation takes O(N) linear running time complexity - this is the bottleneck.
+
+
+MEMORY AND RUNNING TIME TRADE-OFF:-
+------------------------------------
+Start with a small sized array- We don't waste memory but we have to resize the array often with O(N) running time.
+Allocate the huge array at the beginning- We do waste memory because of the large size but at least we do not have to bother with the resize operation.
+
+
+ADDING ITEMS :-
+----------------
+We can insert new items to arbitrary positions associated with a given index (we may have to shift items)
+It is an O(N) linear running time complexity because the items must be shifted. ( in worst-case all the items)
+
+
+Removing Items:-
+------------------
+We can remove the last item quite fast - in O(1) constant running time complexity.
+Removing an arbitrary item of the array -- We may shift multiple items - O(N) running time complexity.
+	First we have to find the item in O(N) in running time then remove the item in O(1) and finally have to shift the other items in O(N)
+	O(N) + O(1) + O(N) = O(N)
+
+OPERATION 				                       RUNNING TIME
+------------------------------------------------------------------
+search based on index	<--------------------->O(1)			   
+
+search for arbitrary item (no index) <-------->O(N)
+
+insert item to the end of array <------------->O(1)
+
+insert item to arbitrary position <----------->O(N)
+
+removing last item <-------------------------->O(1)
+
+removing arbitrary item <--------------------->O(N)
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+ArrayList Example
+---------------------------------------------------------------------------------------------------
+
+ArrayList() constructs an empty list with an initial capacity of ten.
+
+
+
+If we know we are going to store 5 million elements in ArrayList, then it is better to specify capacity because java will have to increase the size multiple times and it will be very expensive. 
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// resizing the array takes O(N)
+List<String> names = new ArrayList<>();
+
+names.add("Kevin");
+names.add("Adam");
+names.add("Ana");
+
+// random accessing in O(1)   [This is the main advantage as far as the ArrayLists are concerned]
+System.out.println(names.get(0));
+
+// inserting item into a given index - O(N)
+names.add(0,"Daniel");
+0 <-----> Kevin   												0 <---------> Daniel 
+1 <-----> Adam --------------After Inserting---------------> 	1 <---------> Kevin
+2 <-----> Ana													2 <---------> Adam 
+																3 <---------> Ana 
+// removing item from a given index - O(N)
+0 <---------> Daniel			                                0 <---------> Kevin
+1 <---------> Kevin ---------------- After Removing--------->   1 <---------> Adam 
+2 <---------> Adam                                              2 <---------> Ana
+3 <---------> Ana
+
+//ARRAYLIST (ARRAYS) ARE FAST IF WE MANIPULATE THE LAST ITEM.
+
+//because of Iterable interface 
+for(String name:names)
+	System.out.println(name);
+
+
+Object[] o = names.toArray();
+for(Object name:o)
+	System.out.println(name);
+
+
+//contains will check whether the item is present in the array 
+System.out.println(names.contains("Katy"));
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
