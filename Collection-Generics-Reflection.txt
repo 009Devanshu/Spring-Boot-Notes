@@ -845,9 +845,185 @@ System.out.println(names.contains("Katy"));
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
+----------------------------------------------
+Exercise: 
+----------------------------------------------
+your exercise is to reverse a List<Integer> in-place (without extra memory) - by the way it is included in Java's Collections.
+For example:
+Input is [1, 2, 3, 4] --> result should be [4, 3, 2, 1] .
+There are multiple solutions (with quadratic running time as well as with linear running time complexity).
+
+
+What is the time complexity of below method solution given by me---
+public void reverse(List<Integer> list) {
+		// here is your implementation
+		List<Integer> list2 = new ArrayList<>();
+		for(int i=list.size()-1;i>=0;i--)
+		{
+		    list2.add(list.get(i));
+		}
+	} 
+
+O(N)--- This is because you iterate through the entire list once, copying each element from the original list to the new list in reverse order.
+The for loop runs from list.size() - 1 to 0, which requires 'n' iterations, where 'n' is the size of the input list.
+Inside the loop, you perform a constant-time operation (adding an element to list2) for each iteration.
+Since the loop runs 'n' times and each iteration performs a constant-time operation, the overall time complexity is O(n).
+
+
+The below is better approach :-
+-----------------------------------
+public static void reverse(List<Integer> list) {
+		for(int i=0, mid=list.size()/2, j=list.size()-1;i<mid;i++,j--) {
+			int num1 = list.get(i);
+			int num2 = list.get(j);
+			list.set(i, num2);
+			list.set(j, num1);
+		}
+	} 
+	
+    public static void main(String[] args) {
+    	
+    	List<Integer> list = new ArrayList<>();
+    	list.add(1);
+    	list.add(2);
+    	list.add(3);
+    	list.add(4);
+    	list.add(5);
+    	list.add(6);
+    	list.add(7);
+    	reverse(list);
+    	System.out.println(list);
+    }
 
 
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------
+What are Linked Lists?
+-------------------------------------------------------
+
+- It is another data structure - so the aim is to be able to store items efficiently (insertion and removal operations).
+- Arrays have a huge disadvantage: there may be "holes" in the data structure and we have to shift a lot of items.
+- This problem can be eliminated by Linked List.
+
+- We have access to the first node of the linked list exclusively (head node) and other items can be accessed starting with this node.
+- Last node is pointing to a null.
+
+- Every node stores the data itself and a reference to the next node in the linked list data structure.
+- This is why linked lists need more memory than arrays.
+- It has an advantage - there can not be "holes" in the data structure so there is no need of shifting items.
+
+- Items are stored next to each to each other in the memory - so there is no random indexing.
+- With the help of Linked List data structure, we can implement more complex data strutures and abstract data types such as stacks and queues.
+
+
+- Finding arbitrary item in a linked List is has O(N) linear running time complexity.
+
+(Go for PDFS for more Visualization)
+
+
+
+-------------------------------------------------------
+Linked List Operations Visualization
+-------------------------------------------------------
+
+Adding Items:-
+---------------
+We can insert new item to the beginning of the data structure in O(1) constant running time.
+function insertBeginning(List list, Node newNode)
+	newNode.next :=list.firstNode
+	list.firstNode :=newNode
+
+We can insert new items to the end of the data structure in O(1) linear running time complexity (Since we can access to the first node exclusively and we will have to pass every node of the linked list data structure)
+
+
+Removing Items:-
+-----------------
+Removing the first item of the linked list is easy because we just have to update the reference - in O(1) constant running time complexity.
+Removing the last item of the linked list is not that easy because first we have to traverse the list to get there - in O(N) linear running time complexity.
+
+conclusion:-
+------------
+Manipulation the first item (insertion or removal):
+	O(1) running time - this is why we like linked lists.
+
+Manipulation arbitrary item or last item:
+	O(N) running time - if we have to do several to these operations then linked list is not the best option possible.
+
+
+OPERATION 									              RUNNING TIME 
+-----------------------------------------------------------------------
+
+find first item (head node) <--------------------------> O(1)
+
+search for arbitrary item <----------------------------> O(N)
+
+insert item to the beginning <-------------------------> O(1)
+
+insert item to arbitrary position <--------------------> O(N)
+
+removing first item <--------------------------------- > O(1)
+
+removing arbitrary item <------------------------------> O(N)
+
+
+
+-----------------------------------------------------------------------------------------------------------------
+Linked List Example
+-----------------------------------------------------------------------------------------------------------------
+
+In Java, the underlying data structure of LinkedList is doubly-LinkedList, that means each node has reference to its next and previous node. So, manipulating first node and the last node in this LinkedList is quite fast in O(1) running time complexity.
+
+
+	List<Integer> list = new LinkedList<>();
+    	
+    	//O(1)
+//    	list.addLast(10);
+//    	list.addLast(20);
+//    	list.addLast(30);
+    	
+		//O(1)
+    	list.addFirst(10);
+    	list.addFirst(20);
+    	list.addFirst(30);
+    	
+		//O(1)
+    	list.removeLast();
+    	list.removeFirst();
+
+
+
+---------------------------------------------------------------------------------------
+Vector
+---------------------------------------------------------------------------------------
+
+Vector is the subtype of List
+
+Question: What is the crucial difference between ArrayList and Vector?
+Answer: As fast as ArrayList is concerned, Java automatically doubles the size of array if we need to insert extra element. But, as far as Vector is concerned, we can use capacity increment and java will increase the size of Vector according to the capacity increment. Vector is synchronized in nature while ArrayList is not synchronized.
+
+
+
+--------------------------------------------------------------------------------------
+Stacks
+--------------------------------------------------------------------------------------
+- It is a abstract data type. (Because they define behaviour without internal implementation)
+- It has LIFO structure.
+- The basic operations are pop(), push() and peek()
+- Most of the programming languages are stack-oriented that's why Stacks are so crucial. Because modern programming languages store the function calls and local variables associated with the function call in a stack abstract data type.
+
+
+- stack memory is a special memory in the RAM
+- this is a special data type (stack) that stores local variables and method calls.
+
+
+- Stacks extends Vector class - which means Stacks are inherently synchronized. However, synchronization is not always needed - in such cases it is better to use ArrayDeque.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------
+Section 11: Queues
+----------------------------------------
 
 
