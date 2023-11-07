@@ -1027,3 +1027,127 @@ Section 11: Queues
 ----------------------------------------
 
 
+- An abstract data type - and it can be implemented either with arrays or with linked lists.
+- FIFO structure. 
+- Basic operations are enqueue, dequeue and peek.
+- Queues are useful when a resource is shared with several consumers (for example threads)
+- Threads are stored in queues.
+- Queues are important in CPU scheduling.
+
+
+----------------------------------------
+Queue Example
+----------------------------------------
+See Collection Intro slide - LinkedList implements Dequeu, Dequeu 
+
+
+		Queue<String> queue = new LinkedList<>();
+
+		//FIFO - O(1)
+    	Queue<String> queue = new LinkedList<>();
+    	queue.add("Adam");
+    	queue.add("Kevin");
+    	queue.add("Anna");
+    	queue.add("Daniel");
+    	
+    	//Check Item 
+    	System.out.println("Check Item: "+queue.element());
+    	
+    	// remove method manipulating the first item - O(1)
+    	System.out.println("Removing Item: "+queue.remove());
+    	
+//    	for(String s:queue)
+//    		System.out.println(s);
+    	
+    	while(!queue.isEmpty())
+    		System.out.println(queue.remove());
+    
+
+
+----------------------------------------
+Priority Queue
+----------------------------------------
+We assign a priority value to every single item.
+	- element with higher priority is served before an element with lower priority.
+	- the elements of priority queue are ordered according to their natural ordering 
+			defined by the Comparable interface. 
+	add() - add element to the queue
+	peek() - 
+	poll()
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+class Person implements Comparable<Person>{
+
+	private String name;
+	private int age;
+	
+	public Person() {
+		
+	}
+	
+	
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public int getAge() {
+		return age;
+	}
+
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+
+	@Override
+	public int compareTo(Person o) {
+
+		//return Integer.compare(age, o.getAge());
+		return this.name.compareTo(o.getName());
+	}
+
+
+	@Override
+	public String toString() {
+		return "Person [name=" + name + ", age=" + age + "]";
+	}
+	
+}
+public class App {
+
+    public static void main(String[] args) {
+    	
+    	Queue<Person> queue = new PriorityQueue<>();
+    	queue.add(new Person("Adam",22));
+    	queue.add(new Person("Kevin",29));
+    	queue.add(new Person("Ann",31));
+    	queue.add(new Person("Daniel",26));
+    	
+    	
+    	while(!queue.isEmpty())
+    		System.out.println(queue.poll());
+    }
+}
+
+Here, we are deciding priority through compareTo method.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+
