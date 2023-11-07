@@ -1038,30 +1038,28 @@ Section 11: Queues
 ----------------------------------------
 Queue Example
 ----------------------------------------
-See Collection Intro slide - LinkedList implements Dequeu, Dequeu 
+See Collection Intro slide - LinkedList implements Dequeu, Dequeu implements Queue.
 
 
-		Queue<String> queue = new LinkedList<>();
-
-		//FIFO - O(1)
-    	Queue<String> queue = new LinkedList<>();
-    	queue.add("Adam");
-    	queue.add("Kevin");
-    	queue.add("Anna");
-    	queue.add("Daniel");
-    	
-    	//Check Item 
-    	System.out.println("Check Item: "+queue.element());
-    	
-    	// remove method manipulating the first item - O(1)
-    	System.out.println("Removing Item: "+queue.remove());
-    	
-//    	for(String s:queue)
-//    		System.out.println(s);
+		/*Deque<Integer> queue = new ArrayDeque<>();
+		//FIFO
+    	queue.add(1);
+    	queue.add(10);
+    	queue.add(100);
+    	queue.add(1000);
     	
     	while(!queue.isEmpty())
-    		System.out.println(queue.remove());
-    
+    		System.out.println(queue.poll());*/
+    	
+    	Deque<Integer> stack = new ArrayDeque<>();
+		//LIFO
+    	stack.push(1);
+    	stack.push(10);
+    	stack.push(100);
+    	stack.push(1000);
+    	
+    	while(!stack.isEmpty())
+    		System.out.println(stack.pop());
 
 
 ----------------------------------------
@@ -1146,6 +1144,189 @@ public class App {
 
 Here, we are deciding priority through compareTo method.
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+----------------------------------------
+ArrayDeque Example
+----------------------------------------
+
+Deque - Double ended Queue
+		Can manipulate both sides of the Queue in O(1) constant running time complexity. That's why implementing Queues and Stacks are extremely efficient with the help of deques.
+	
+ArrayDeque : Resizable-array implementation of the Deque interface. So, the most efficient than LinkedList.
+			 ArrayDeque has no capacity restrictions, they grow as necessary to support usage.
+
+
+
+
+ public static void main(String[] args) {
+    	
+		/*
+		 * Deque<Integer> queue = new ArrayDeque<>(); queue.add(1); queue.add(10);
+		 * queue.add(100); queue.add(1000); //We can use offer method 
+		 * 
+		 * while(!queue.isEmpty()) System.out.println(queue.poll());
+		 */
+		 Output-- 1, 10,100,1000
+    	
+    	Deque<Integer> stack = new ArrayDeque<>();
+    	stack.push(1);
+    	stack.push(10);
+    	stack.push(100);
+    	stack.push(1000);
+    	
+    	while(!stack.isEmpty())
+    		System.out.println(stack.poll());
+		Output-- 1000, 100, 10, 1
+    }
+
+
+
+---------------------------------------------------
+ArrayDeque and Stack performance comparison
+---------------------------------------------------
+
+Stack is synchronized (because it extends the Vector class) this is why it is going to be slower than the ArrayDeque solution. So it is advisable to use ArrayDeque if we are after a LIFO structure. 
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+-------------------------------------------------
+Section 12: Maps
+-------------------------------------------------
+
+---------------------------------------
+What are associative arrays?
+---------------------------------------
+- Associative arrays (maps or dictionaries) are abstract data types. For example, we can implement associative arrays with the help of an underlying one-dimensional array or with the help of balanced binary search tree.
+- Composed of a collection of key-value pair.
+- Most of the times we implement associative arrays with hashtables but binary search tree can be used as well.
+- The aim is to reach O(1) time complexity for most of the operations.
+
+
+- Finding an arbitrary item in an array takes O(N) linear running time (But it has O(1 random access)). We can do better with binary search trees with O(logN) logarithmic running time (AVL and red-black trees can guarantee O(logN) running times). We can combine random access with hash-functions to end-up with O(1) running  times (Associative array).
+
+
+- There are several operations we want to implement - and we want these operations to have O(1) running time.
+- Adding (key,value) pairs to the collection. 
+- Removing (key,value) pairs from the collection. 
+- Lookup a given value associated with a given key. 
+- the key and value pairs are unordered - this is why associative arrays do not support sorting as an operation. 
+
+
+
+---------------------------------------
+HashTables Introduction
+---------------------------------------
+The motivation is that we want to store (key,value) pairs efficiently - so that insert and remove operations take O(1) running time. 
+Example:- Storing Emails and Users as key-value pairs in the sense that key should be unique in nature. That means a single key (Email) should not have more that one value (User).
+
+
+How to achieve O(1) running times for insertion and removal operations?
+we should transform the key into an array index - to achieve random access. 
+This is why keys must be unique to avoid using the same indexes. 
+h(X) hash-function transforms the key into an index in the range [0,m-1].
+h(x) hash-function maps keys to array indexes in the array to be able to use random indexing and achieve O(1) running time. 
+It should handle any types -  strings, floats, Integers or even custom objects as well. 
+If we have integer keys, we just have to use modulo (%) operator to transform the number into the range [0,m-1]
+We can use ASCII values of the letters when dealing with Strings. 
+
+Example:- 
+
+	INSERT("ADAM",39);
+	A(65) +	D(68) +	A(65) +	M(77) = 275
+	275%8--> 3 (Suppose size of the bucket is 8)
+	("ADAM",39) will be inserted at index 3.
+
+	INSERT("NAAC",21)
+	N(78) + A(65) + A(65) + C(67) = 275
+	275%8--> 3 (In the same bucket)
+
+	Here, we will get collision.
+
+
+---------------------------------------
+HashTables Introduction: Collisions
+---------------------------------------
+Collisions occur when the h(x) hash-function maps two keys to the same array slot (bucket).
+
+There are several approaches to deal with collision:-
+1) Chaining 
+2) Open Addressing
+
+1) Chaining:- We store the items in the same bucket (with same indexes) in a linked list data structure. 
+In worst-case scenario, the h(x) function puts all the items in the same bucket.
+We end-up with a linked list with O(N) linear running time for most of the operations. 
+
+2) Open Addressing:-If we come to the conclusion that there is a collision then we generate a new index for the item (try to find another bucket)
+
+	Linear probing:-if collision happened at array index k then we try index k+1, k+2, k+3 until we find any empty bucket. 
+	--> Not always the best option possible because there will be clusters in the underlying arrays. 
+	--> but it has better cache performance than other approaches.
+
+	Quadratic probing:- if collision happened at array index k then we try successive values of an arbitrary quadratic polynomial
+		(array slots 1,4,9,16... steps away from the collision)
+	--> There will be no cluster (unlike linear probing)
+	--> but no cache advantage (items are far away in memory)
+
+	Rehasing:- if collision happened at array index k then we use the h(x) hash-function again to generate a new index. 
+
+
+								Average-Case 					Worst-Case
+----------------------------------------------------------------------------------------								
+Memory Complexity				O(N)							O(N)
+
+Search      					O(1)							O(N)
+
+Insertion 						O(1)							O(N)
+
+Deletion 						O(1)							O(N)
+
+
+
+
+------------------------------------------------------------
+Hashtable Introduction: Load Factor and dynamic resizing
+------------------------------------------------------------
+
+- the p(x) probability of collision  is not constant. 
+- The more items are there in the HashTable, the higher the p(x) probability of collision. 
+- This is why we have to define new parameter of the HashTable - so called load-factor. 
+
+Defining Load Factor:- n/m 
+Where n---> number of actual items in the array data structure. 
+	  m---> m is the size of the array. 
+Small Load Factor (around 0)
+	- The hashtable is nearly empty which means low p(x) probability of Collision. 
+	- but lot of memory is wasted. 
+Hight Load Factor (around 1) 
+	- The hashtable is nearly full which means high p(x) probability of Collision. 
+	- no memory is waster but the running time may be reduced to O(N) linear running time. 
+So, there is a trade off between memory and running time. 
+
+Load Factor and Dynamic Resizing:-
+Performance relies heavily on the load factor. Sometimes it is better to use memory to achieve faster running times. 
+	-> When the load factor is >0.75 then java resizes the hashtable automatically to avoid too many collisions. 
+	-> Python does the same when load factor >0.66
+
+The problem with dynamic resizing:- 
+We have to consider all the items in the old hashtable and insert them into the new one with the h(x) hash-function.
+It takes O(N) linear running time - this fact may make dynamic sized hashtables inappropriate for real time applications. 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
