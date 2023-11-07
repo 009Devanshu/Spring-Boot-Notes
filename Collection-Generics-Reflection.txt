@@ -1319,14 +1319,40 @@ It takes O(N) linear running time - this fact may make dynamic sized hashtables 
 
 
 
+------------------------------------------------------------
+HashMap Example
+------------------------------------------------------------
+Hash Table based implementation of Map interface. It is roughly equivalent to HashTable except it is unsynchronized and accepts nulls (both as key and value). 
+HashMap is non-synchronized that means we can not use it in multithreaded environment.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Map<Integer,String> map = new HashMap<>();
+    	// Insert item with O(1) if there is no collision
+    	map.put(1, "Adam");
+    	map.put(2, "Kevin");
+    	map.put(3, "Anna");
+    	map.put(4, "Lucy");
+
+		//Remove item in O(1)
+    	map.remove(4);
+    	
+    	for(Integer key:map.keySet())
+    		System.out.println(map.get(key));
+
+		//Another way to key and value 
+		for(Map.Entry<Integer,String> entry:map.entrySet())
+    		System.out.println(entry.getKey()+"_"+entry.getValue());
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+HashMap does not store items in sorted order. This is one of the disadvantages of HashMap.
 
 
 
-
-
-
-
-
+-------------------------------------------------------------
+HashMap example - hashcode() and equals()
+-------------------------------------------------------------
 
 
 
