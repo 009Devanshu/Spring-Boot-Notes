@@ -1584,4 +1584,108 @@ LinkedHashSet Example
 It maintains the insertion order. 
 Needs more memory than HashSets because under the hood it uses  Doubly LinkedList.
 
+-------------------------------------------------------
+TreeSet Example
+-------------------------------------------------------
+
+public static void main(String[] args) {
+		
+		//O(logN)
+		//Memory Friendly
+		SortedSet<Integer> set = new TreeSet<>();
+		set.add(12);
+		set.add(1);
+		set.add(9);
+		set.add(5);
+		set.add(120);
+		set.add(87);
+		set.add(55);
+		
+		Set<Integer> subSet =  set.subSet(1, 120);
+		//other methods are -- tailSet(), headSet(), first(), last()
+		
+		for(int i:subSet)
+			System.out.println(i);
+	}
+
+
+-------------------------------------------------------
+Sets Comparision 
+-------------------------------------------------------
+
+HashSet and													TreeSet  
+LinkedHashSet 
+---------------------------------------------------------------------------------------
+
+User Arrays and hash-functions 								uses balanced binary search tree + maintains order 
+under the hood 
+
+We can achieve O(1) constant  running time 					We can achieve guaranteed O(logN) logarithmic running time 
+
+Worst- Case running time is O(logN) 						Can not store null keys + no parameters to tune 
+
+Can store null keys as well 								
+															Needs less memory
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------
+Section 14: Sorting Collections 
+--------------------------------------------------
+
+---------------------------------------
+Sorting Arrays 
+---------------------------------------
+
+Java uses:-
+// Quicksort - to sort primitive types (int, float etc)
+// Mergesort - to sort reference types (Integer, String etc)
+Both these algorithms are extremely fast due O(logN) time complexity. Mergesort privides guaranteed O(logN) running time complexity while Quicksort provides, in worst-case scenario, quadratic running time complexity.
+
+Arrays.sort() is used to sort one-dimensional array in ascending order. We can not use this method in any way to  descend the array (But we can use for loop in reverse order). 
+for(int i=nums.length-1;i>=0;i--)
+			System.out.print(nums[i]+" ");
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+public static void main(String[] args) {
+		
+		int[] nums = {1,10,-5,2,5,12,14,0,1,2};    (We can use Integer in place of int that means Arrays.sort() can be used for primitive types as well as reference 	types)
+		
+		Arrays.sort(nums);
+		
+		for(int i:nums)
+			System.out.print(i+" ");
+	}
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+---------------------------------------
+Sorting Collections 
+---------------------------------------
+
+
+Collections.sort() sorts the List interface  Collection objects in ascending order (by default). 
+
+We can reverse the order:-
+Collections.sort(listObject, Collections.reverseOrder());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
