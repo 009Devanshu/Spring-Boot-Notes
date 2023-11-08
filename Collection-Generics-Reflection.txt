@@ -1676,16 +1676,364 @@ Collections.sort(listObject, Collections.reverseOrder());
 
 
 
+---------------------------------------
+Comparable Interface
+---------------------------------------
+
+How would you sort Objects like Person or Bikes etc. Comparable interface is here to rescue. 
+
+
+public class Book {
+	private String authorName;
+	private String title;
+	private int numOfPages;
+	
+	public Book() {
+		
+	}
+
+	public Book(String authorName, String title, int numOfPages) {
+		this.authorName = authorName;
+		this.title = title;
+		this.numOfPages = numOfPages;
+	}
+
+	public String getAuthorName() {
+		return authorName;
+	}
+
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getNumOfPages() {
+		return numOfPages;
+	}
+
+	public void setNumOfPages(int numOfPages) {
+		this.numOfPages = numOfPages;
+	}
+
+	@Override
+	public String toString() {
+		return this.authorName+"-"+this.title+"-"+this.numOfPages;
+	}
+	
+}
+
+
+
+public static void main(String[] args) {
+		
+		List<Book> books = new ArrayList<>();
+		books.add(new Book("Joseph Murphy","The Power of Subconcious Mind",1123));
+		books.add(new Book("Dale Carnegie","How to win friends",456));
+		books.add(new Book("Alchemist","Paul Coehlo",323));
+		books.add(new Book("Harper Lee","To Kill a MockingBird",987));
+		
+		Collections.sort(books);// Error
+
+	}
+
+
+Here, Java will try to know on what basis it should compare books. Compare with authorName, title or numOfPages. That's why we would need to specify that. We can use Comparable interface or Comparator interface if we want our own sorting order.
+Moreover, sort method accepts those objects which implements Comparable interface. 
+static <T extends Comparable<? super T>> void sort(List<T> list)  	
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+public class Book implements Comparable<Book>{
+	private String authorName;
+	private String title;
+	private int numOfPages;
+	
+	public Book() {
+		
+	}
+
+	public Book(String authorName, String title, int numOfPages) {
+		this.authorName = authorName;
+		this.title = title;
+		this.numOfPages = numOfPages;
+	}
+
+	public String getAuthorName() {
+		return authorName;
+	}
+
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getNumOfPages() {
+		return numOfPages;
+	}
+
+	public void setNumOfPages(int numOfPages) {
+		this.numOfPages = numOfPages;
+	}
+
+	@Override
+	public String toString() {
+		return this.authorName+"-"+this.title+"-"+this.numOfPages;
+	}
+
+	@Override
+	public int compareTo(Book otherBook) {
+		return this.authorName.compareTo(otherBook.authorName);
+	}
+	
+}
+
+
+public static void main(String[] args) {
+		
+		List<Book> books = new ArrayList<>();
+		books.add(new Book("Joseph Murphy","The Power of Subconcious Mind",1123));
+		books.add(new Book("Dale Carnegie","How to win friends",456));
+		books.add(new Book("Alchemist","Paul Coehlo",323));
+		books.add(new Book("Harper Lee","To Kill a MockingBird",987));
+		
+		Collections.sort(books);
+
+		for(Book theBook:books)
+			System.out.println(theBook);
+	}
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+If we want to sort books on the basis of number of pages, override compareTo() method like this--
+@Override
+	public int compareTo(Book otherBook) {
+		return Integer.compare(this.numOfPages, otherBook.numOfPages);
+}
+
+If we want to sort books in reverse order, then
+@Override
+	public int compareTo(Book otherBook) {
+		return -Integer.compare(this.numOfPages, otherBook.numOfPages);
+}
+or 
+@Override
+	public int compareTo(Book otherBook) {
+		return -this.authorName.compareTo(otherBook.authorName);
+	}
+
+But, sometimes it does not work fine (Not a consisting approach if we are descending order just by adding a minus sign). So, we need to implement compareTo() like below--
+public int compareTo(Book otherBook){
+	if(this.numOfPages>otherBook.numOfPages) return -1;
+	if(this.numOfPages==otherBook.numOfPages) return 0;
+	else return +1;
+}
+
+
+
+----------------------------------------------------
+Comparator Interface 
+----------------------------------------------------
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+public class Book{
+	private String authorName;
+	private String title;
+	private int numOfPages;
+	
+	public Book() {
+		
+	}
+
+	public Book(String authorName, String title, int numOfPages) {
+		this.authorName = authorName;
+		this.title = title;
+		this.numOfPages = numOfPages;
+	}
+
+	public String getAuthorName() {
+		return authorName;
+	}
+
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getNumOfPages() {
+		return numOfPages;
+	}
+
+	public void setNumOfPages(int numOfPages) {
+		this.numOfPages = numOfPages;
+	}
+
+	@Override
+	public String toString() {
+		return this.authorName+"-"+this.title+"-"+this.numOfPages;
+	}
+
+	
+	
+}
+
+
+public class BookComparator implements Comparator<Book>{
+
+	@Override
+	public int compare(Book o1, Book o2) {
+		return Integer.compare(o1.getNumOfPages(), o2.getNumOfPages());
+	}
+
+}
 
 
 
 
+public class App {
+
+	
+	public static void main(String[] args) {
+		
+		List<Book> books = new ArrayList<>();
+		books.add(new Book("Joseph Murphy","The Power of Subconcious Mind",1123));
+		books.add(new Book("Dale Carnegie","How to win friends",456));
+		books.add(new Book("Alchemist","Paul Coehlo",323));
+		books.add(new Book("Harper Lee","To Kill a MockingBird",987));
+		
+		Collections.sort(books, new BookComparator());
+
+		for(Book theBook:books)
+			System.out.println(theBook);
+	}
+}
+
+
+
+If we want to reverse-- 
+Collections.sort(books,new BookComparator().reversed());   Using reversed() is much more consistent than using negative sigh in compare method.
+
+If we want to compare on the basis of title-- 
+@Override
+	public int compare(Book o1, Book o2) {
+		return o1.getTitle.compareTo(o2.getTitle);
+	}
+
+It is a bit better solution to use Comparator and define behaviour to sort objects outside the class. 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-----------------------------------------
+Sorting With Lambdas
+-----------------------------------------
+
+
+Instead of using Comparable or Comparator, we can use Lambda Expression 
+
+Collections.sort(books, Comparator.comparing(Book::getTitle));
+If you want to reverse:-
+Collections.sort(books, Comparator.comparing(Book::getTitle).reversed());
+
+We can sort custom objects based on multiple parameters using Lambda Expression:-
+Demostration-:
+		persons.add(new Person("Adam",23));
+		persons.add(new Person("Adam",33));
+		persons.add(new Person("Adam",13));
+
+		Collections.sort(persons, Comparator.comparing(Person::getName)
+				.thenComparing(Person::getAge).reversed());
+
+		for(Person p:persons)
+			System.out.println(p.getName()+" - "+p.getAge());
+
+Output:-
+		Adam - 33
+		Adam - 23
+		Adam - 13
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------------
+Section 15: Collections Class 
+-----------------------------------------------------------
+
+------------------------------------------
+Methods of the Collection Class 
+------------------------------------------
+
+- reverse()
+- min()/max()
+- shuffle()
+- rotate()
+- replaceAll()
+
+
+----------------------------------------------
+Unmodifiable Collections 
+----------------------------------------------
+
+
+public class App {
+
+	
+	public static void main(String[] args) {
+		
+		List<Integer> list = new ArrayList<>();
+		list.add(7);
+		list.add(10);
+		list.add(6);
+		list.add(11);
+		list.add(8);
+		list.add(5);
+		
+		list =Collections.unmodifiableList(list);
+		
+		modify(list);
+		
+		
+		
+		System.out.println(list);
+	}
+	public static int modify(List<Integer> list){
+		return list.remove(0);
+	}
+}
 
 
 
 
+Another Real Time Demonstration:-
 
+public class Node 
+{
+	List<Node> neighbours;
 
+	public Node(){
+		this.neighbours = new ArrayList<>();
+	}
 
-
-
+	public static List<Node> getNeighbours(){
+		return Collections.unmodifiableList(neighbours);   //But the use of unmodifiableList() method here is clear to me. How can someone modify ArrayList if I return it directly 
+	}
+}
