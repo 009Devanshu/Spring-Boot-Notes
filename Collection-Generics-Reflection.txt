@@ -1355,6 +1355,194 @@ HashMap example - hashcode() and equals()
 -------------------------------------------------------------
 
 
+public class Person {
+	
+	private String name;
+	private int age;
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	
+	
+	@Override
+	public int hashCode() {
+		//hashCode()=hash-function
+		//it calculates the Array index based on the key (key==Person objects)
+		//avoid clustering with prime numbers
+		return Objects.hash(age, name);
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		// because in a hashmap, it may happen (collisions)
+		// that we have to find the item (Person) in a linked list
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Person other = (Person) obj;
+		return age == other.age && Objects.equals(name, other.name);
+	}
+
+
+	@Override
+	public String toString() {
+		return "Person [name=" + name + ", age=" + age + "]";
+	}
+	
+	
+}
+
+
+
+Java will use this hashCode method as far as Person as key is concerned.
+	Map<Person,String> map = new HashMap<>();
+Java will not use this hashCode if we don't use Person as Key. 
+	Map<String,Person> map = new HashMap<>(); 
+
+
+
+
+-------------------------------------------------------------
+LinkedHashMap
+-------------------------------------------------------------
+
+Java is not going to maintain any order as far as HashMap is concerned.
+
+Map<String,Integer> map = new HashMap<>();
+		map.put("aaa", 1);
+		map.put("bbb", 2);
+		map.put("ccc", 3);
+		map.put("ddd", 4);
+		map.put("eee", 5);
+		map.put("fff", 6);
+		map.put("ggg", 7);
+		
+		for(String key:map.keySet())
+			System.out.println(key+"-"+map.get(key));
+
+Output:-
+aaa-1
+ccc-3
+bbb-2
+eee-5
+ddd-4
+ggg-7
+fff-6
+(Here, we are getting unordered output. It might be happened that output is ordered but that is not guaranteed)
+
+
+To overcome this problem, we use LinkedHashMap.
+//There is doubly Linked List connecting the inserted items
+//LinkedHashMap needs more memory
+Map<String,Integer> map = new LinkedHashMap<>();
+
+
+-------------------------------------------------------------
+Tree Data Structures and Red Black Trees 
+-------------------------------------------------------------
+
+In order to understand TreeSet and TreeMap, we have to understand Red-Black Tree and in order to understand Red-Black Tree, we have to understand binary search tree.
+
+Binary Search Treee 
+----------------------
+- Arrays can manipulate the last item in O(1) constant running time complexity that is quite fast. 
+- Linked List can manipulate the first item of the data structure quite fast. 
+- Searching for an arbitrary item takes O(N) linear running time for both data structures. 
+  (WHAT IF THE ARRAY DATA STRUCTURE IS SORTED?)
+- We can search the arbitrary item in O(logN) logarithmic time complexity. 
+- This is concept behind binary search tree. 
+
+
+- Every node in the tree can have at most 2 children (left child and right child)
+- left child is smaller than parent node. 
+- right child is greater thatn parent node. 
+- We can access the root node exclusively and all other nodes can be accessed via the root node. 
+(We can say that left subtree contains smaller items and right subtree contains larger items)
+
+
+
+How to construct a binary search tree 
+-------------------------------------------
+(Lecture 54)
+
+
+Drawback of Binary Search Tree 
+------------------------------------------
+(Lecture 54)
+
+But, Red-Black tree or AVL tree (Which are balanced binary search tree) remove this drawback and provide guaranteed O(logN) running time complexity using left-rotation or right rotation.
+
+								Average-Case 					Worst-Case
+----------------------------------------------------------------------------------------								
+Memory Complexity				O(N)							O(N)
+
+Search      					O(N)							O(N)
+
+Insertion 						O(N)							O(N)
+
+Deletion 						O(N)							O(N)
+
+
+In Red-Black Tree, every node can be either Red or Black and every single path from the root node to a null pointer contains same number of black nodes (first root node(But, I am not sure it is true) and null pointers are black).  
+
+
+---------------------------------------------------------
+TreeMap Example
+---------------------------------------------------------
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+TreeMap<Integer,String> map = new TreeMap<>();
+		map.put(10, "ten");
+		map.put(3, "three");
+		map.put(5, "five");
+		map.put(1, "one");
+		map.put(8, "eight");
+		
+		System.out.println("Smallest Key "+map.firstKey()); 
+
+		for(Map.Entry<Integer, String> entry:map.entrySet())
+			System.out.println(entry.getKey()+" - "+entry.getValue());
+
+Output: 
+1 - one
+3 - three
+5 - five
+8 - eight
+10 - ten
+(It is sorted in increasing order)
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+What If we want to sort in decreasing order of keys:-
+Map<Integer,String> map = new TreeMap<>(Comparator.reverseOrder());
+
+
+HashTables has O(1) running time complexity which is faster than O(logN) but it is not guaranteed. But, log(N) running time complexity in TreeMap is guaranteed.
+
+
+----------------------------------------------------------
+TreeMap and HashMap Performance comparision
+----------------------------------------------------------
+
+As we know Java uses chaining in case of collision in HashMap which may give linear running time complexity in worst case scenario. So, Java changed its startegy to handle collisions  and instead of chaining Java transforms the items into Red-Black tree which means HashMaps and LinkedHashMaps have O(logN) running in worst-case scenario. In previous versions, we ended up with O(N) running time complexity in worst-case scenario. But, with the update we end up with O(logN) running time complexity (balanced binary search tree)
+
+
+
+HashMap and 																TreeMap 
+LinkedHashMap 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Use arrays and hash-functions under the hood 								uses balanced binary search tree and maintains order (Increasing or decreasing order)
+
+We can achieve O(1) runnint time 											O(logN) is guaranteed.
+
+Worst Case running time is O(logN)											can not use null as keys + no parameter to tune (loadFactor)
+
+Can store null keys as well 												
+																			Need less memory
 
 
 
