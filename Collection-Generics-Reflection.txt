@@ -1545,4 +1545,43 @@ Can store null keys as well
 																			Need less memory
 
 
+-------------------------------------------------------------
+Section 13: Sets 
+-------------------------------------------------------------
+Sets are abstract data types that can store certain values without any particular order and no repeated values - no duplicates (These are also crucial differences from List)
+
+Go for lecture or slide for venn diagram (I don't know why. Lol!!)
+
+
+--------------------------------------------
+HashSet Example 
+--------------------------------------------
+It is somewhat similar to HashTable. So, under the hood, HashSet uses one-dimensional array and hash-function. It uses scalar values instead of key-value pair.
+
+
+public static void main(String[] args) {
+		
+		// initial capacity=16
+		// hashCode() function (hash-function) transform the input into array index
+		// O(1) + memory heavy 
+		// there may be collisions - O(logN)
+		Set<String> set  = new HashSet<>();
+		set.add("Anna");
+		set.add("Daniel");
+		set.add("Andre");
+		set.add("Rober");
+		
+		for(String s:set)
+			System.out.println(s);
+	}
+
+hash-function will calculate index with the help of values that we are adding. 
+
+
+------------------------------------------------------
+LinkedHashSet Example 
+------------------------------------------------------
+It maintains the insertion order. 
+Needs more memory than HashSets because under the hood it uses  Doubly LinkedList.
+
 
