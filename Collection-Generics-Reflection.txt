@@ -2037,3 +2037,48 @@ public class Node
 		return Collections.unmodifiableList(neighbours);   //But the use of unmodifiableList() method here is clear to me. How can someone modify ArrayList if I return it directly 
 	}
 }
+
+
+--------------------------------------------
+Synchronized Collections 
+--------------------------------------------
+public static void main(String[] args) {
+
+		// add() and remove() methods are also synchronized 
+		// It is not an efficient solution because of intrinsic lock- not that efficient 
+		// because threads have to wait for each other when want to execute independent methods
+		// (operations)
+		// Best Solution - CONCURRENT COLLECTIONS !!!
+		List<Integer> list = Collections.synchronizedList(new ArrayList<>());
+		
+
+		Thread t1 = new Thread(new Runnable(){
+			public void run() {
+				for(int i=0;i<1000;i++) {
+					list.add(i);
+				}
+			}
+		});
+		Thread t2 = new Thread(new Runnable(){
+			public void run() {
+				for(int i=0;i<1000;i++) {
+					list.add(i);
+				}
+			}
+		});
+		t1.start();
+		t2.start();
+		
+		try {
+			t1.join();
+			t2.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(list.size());
+	}
+	
+
+
+
+	
