@@ -1,0 +1,178 @@
+Better Way to revise and practice:- See the concept, imagine a problem and try to implement your concept.
+-------------------------------------------------------------------------------------------------------------------
+
+
+Important concepts in Stream API:--
+---------------------------------------------
+
+1-> Find sum of elements present in the arrays:
+Integer [] nums = {1,5,3,-2,9,12};
+int [] nums = {1,5,3,-2,9,12};
+
+
+2-> sorted()
+    sorted(Comparator.reverseOrder())
+
+
+3-> String class startsWith() method. 
+    Needed to filter Strings of Stream on the basis of first character. 
+
+4-> Collectors.groupingBy
+    Map<Type of groupingBy,List<CustomClass>>  map=list.stream().collect(Collectors.groupingBy(CustomClass::MethodName))  (If list if of Custom class)
+    Map<String,List<String>> map= list.stream().collect(Collectors.groupingBy(str->str.substring(0,1))); 
+    
+
+
+5) map vs flatMap
+   Using map() method, we can transform the original values in a stream. It operates just like to operate on a column in a table. 
+
+   //flatMap
+   Let's have an array of two words--> Hello, Shell
+   We need to collect unique characters. 
+   List<String> list = Arrays.asList("hello","shell");
+    List<String[]> list3= list.stream().map(x->x.split(""))
+                .collect(Collectors.toList());
+    map() method will give Stream<String[]>, then somehow, we need to merge these two arrays of Strings and make a single stream. 
+    List<String> list3= list.stream().map(x->x.split("")).flatMap(Arrays::stream).collect(Collectors.toList());
+
+6) 
+given two lists of numbers ([1, 2, 3], [4, 5]). Generate all pairs of possible numbers!
+
+So the result in the case should be: (1,4), (1,5), (2,4),(2,5),(3,4),(3,5)
+
+public static List<List<Integer>> generatePairs() {
+        
+        List<Integer> nums1 = Arrays.asList(1, 2, 3);
+        List<Integer> nums2 = Arrays.asList(4, 5);
+		
+		List<List<Integer>> pairs = nums1.stream().flatMap(i -> nums2.stream()
+				.map(j -> Arrays.asList(i, j))).collect(Collectors.toList());
+		
+		// Until map() -- Stream<Stream<List<Integer>>>
+		// After flatMap() -- Stream<List<Integer>>
+		
+        return pairs;
+}
+
+
+7)
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+1) 
+Integer [] nums = {1,5,3,-2,9,12};
+int sum =  Arrays.stream(nums).reduce((a,b)->a+b).get();
+
+int[] nums =  {1,5,3,-2,9,12};
+int sum= Arrays.stream().sum();
+
+
+2) list.stream().sorted()...
+   Map<Type of groupingBy,List<CustomClass>>  map=list.stream().sorted(Comparator.reverseOrder())  (If list if of Custom class)
+   Map<String,List<String>> map= list.stream().collect(Collectors.groupingBy(str->str.substring(0,1))); 
+
+4) Tracing map type object 
+    map.entrySet().stream().forEach(e->System.out.println(e.getKey()+"-"+e.getValue()));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------
+Streams with numbers 
+------------------------------
+->Arrays.stream(int[]) returns IntStream object. 
+
+int[] nums = {1,5,3,-2,9,12};
+//Arrays.stream(nums).forEach(System.out::println);
+//int sum =  Arrays.stream(nums).sum();
+
+//IntStream.range(0, 5).forEach(x->System.out.print(x+" ")); (No need to create one-dimensional array, it will give int array with elements {0,1,2,3,4})
+
+//IntStream.range(0,10).filter(x->x%2==0).forEach(System.out::println);
+
+
+Another Method to create Stream --> Stream.of(T...values)
+
+------------------------------
+Streams with Strings
+------------------------------
+
+String[] names = {"Adam","Daniel","Martha","Kevin","Ben","Joe","Brad","Susan"};
+Stream.of(names).sorted().forEach(System.out::println);
+
+
+// For reverse order
+//Stream.of(names).sorted(Comparator.reverseOrder()).forEach(System.out::println);
+
+// For Filering 
+//Stream.of(names).filter(x->x.startsWith("A")).forEach(System.out::println);
+
+
+
+-----------------------------------------------
+Streams with Custom Objects - Part 1
+-----------------------------------------------
+
+
+
+
+==============================================================================
+Comparator.reverseOrder()
+Comparator.comparing(Method Reference)
+
+
+
+
+-----------------------------------------------
+Map and flatMap
+-----------------------------------------------
+
+
+
+
+-----------------------------------------------
+Section 18: Reflection
+-----------------------------------------------
+
+
+
+-------------------------------
+What is Reflection?
+-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
