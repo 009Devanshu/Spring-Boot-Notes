@@ -20,7 +20,11 @@ int [] nums = {1,5,3,-2,9,12};
 4-> Collectors.groupingBy
     Map<Type of groupingBy,List<CustomClass>>  map=list.stream().collect(Collectors.groupingBy(CustomClass::MethodName))  (If list if of Custom class)
     Map<String,List<String>> map= list.stream().collect(Collectors.groupingBy(str->str.substring(0,1))); 
-    
+
+    Note: groupingByBy(...,Collectors.toList() ) -- return  same a with single argument->   Map<..., List<Class>>
+          groupingByBy(...,Collectors.counting() ) -- return -->   Map<..., Long>
+          groupingByBy(...,Collectors.maxBy(Comparator))
+
 
 
 5) map vs flatMap
@@ -54,8 +58,75 @@ public static List<List<Integer>> generatePairs() {
         return pairs;
 }
 
+7) count()    
+8) Finding max and min value from a List of Integer.
+    reduce(Integer::max)        (Returns Optional type)
+    reduce(Integer::min)
 
-7)
+9) Get book with longest pages 
+
+   books.stream().reduce((b1,b2)->b1.getPages()>b2.getPages()? b1 : b2).ifPresent(System.out::println);;
+
+10) Find total number of pages:-
+    books.stream().map(b->b.getPages()).reduce((a,b)->a+b).ifPresent(System.out::println);
+    map() will give Stream<Integer>, which is operated by reduce method to find sum. 
+
+    We can do:-
+    int total= books.stream().mapToInt(b->b.getPages()).sum();
+    mapToInt() will give IntStream type which contains sum() method to find the sum. 
+
+
+11) Longest pages 
+    books.stream().map(b->b.getPages()).reduce(Integer::max).ifPresent(x->System.out.println(x));;
+
+    books.stream().mapToInt(b->b.getPages()).max().ifPresent(System.out::println);
+    mapToInt() return---> IntStream
+    IntStream has---> max()
+    max() return---> OptionalInt
+
+    Note: Optional ifPresent and orElse have greate use
+
+12) allMatch(), noneMatch(), findFirst(), findAny()
+
+    // allMatch(predicate) - checking if a predicate matches all elements 
+    stream().allMatch(predicate)
+
+    // noneMatch(predicate) - opposite of allMatch(predicate)
+    // short-circuiting: some operations don't need to process the whole stream to process the result 
+
+    // findAny() - returns arbitrary element 
+    // Use parallelization 
+
+    // findFirst() - Sequential
+
+13) To collect duplicate items from a list 
+    filter(e->Collections.frequency(list,e)>1)
+
+14) Finding max and min 
+    From int type array-- Damn Easy 
+    From Integer type array-- Stream class max method 
+        max(Comparator.comparing(Integer::valueOf))--return--> Optional
+
+15) 
+
+
+Note: int type array, stream() will return IntStream.
+      Integer type array, stream() will return Stream.
+
+Note: Stream object contains 
+      reduce(Functional)
+      max(Comparator.comparing(Method Reference))
+      sorted()
+      sorted(Comparator.reverseOrder())  or  //sorted(Collections.reverseOrder())
+
+An Important Method in IntStream -- boxed() (returns Stream<Integer>)
+
+
+16) collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)  Need to understand
+
+
+
+
 
 
 
@@ -69,6 +140,7 @@ int sum =  Arrays.stream(nums).reduce((a,b)->a+b).get();
 
 int[] nums =  {1,5,3,-2,9,12};
 int sum= Arrays.stream().sum();
+stream() will give IntStream().
 
 
 2) list.stream().sorted()...
