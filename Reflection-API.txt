@@ -1,0 +1,140 @@
+------------------------------------------
+What is Reflection ? 
+------------------------------------------
+At compile-time, we may not able to know methods, classes etc. 
+With the help of Reflection API, we may know them and analyze them at run time. (For example, getClass())
+
+------------------------------------------
+getClass()
+------------------------------------------
+
+Test Case 1:-
+class-->  Person 
+
+// First Approach
+Class<Person> c=Person.class;
+c.getName() --> return fully qualified name. 
+
+// Second Approach
+Class c = null;
+Within try-catch
+c = Class.forName(Class_With_Package_Name);
+
+Test Case 2:-
+Two classes implements an Interface, we want to know which class is sub-type of that Interface:-
+
+public static void getClass(Vehicle v){
+    Class c = v.getClass();
+    System.out.println(c.getName());
+}
+
+
+------------------------------------------
+Fields
+------------------------------------------
+
+First of all get Class object associated with a Class. 
+call getFields() on Class object --returns--> Field[]
+We can iterate Field array. 
+
+Class<Person> c = Persons.class;
+Field[] fields= c.getFields();
+for(Field theField:fields){
+    System.out.println(theField.getName());
+}
+
+
+
+------------------------------------------
+Methods 
+------------------------------------------
+getMethods()
+
+
+
+------------------------------------------
+Getting private Fields and Methods 
+------------------------------------------
+
+Field[] fields = c.getDeclaredFields();
+for(Field f:fields){
+    f.setAccessible(true);
+    System.out.println(f.getName());
+}
+
+
+
+----------------------------------------------------
+private Constructor and Singleton Pattern
+----------------------------------------------------
+
+We can instantiate a class using Reflection:-
+
+public class Test 
+{
+    public Test(){
+
+    }
+    public String toString(){
+        return "This is Test class...";
+    }
+}
+
+
+Constructor<Test> constructor = Test.class.getDeclaredContructor();
+
+Test test1 = constructor.newInstance();                     // Arguments in newInstance() depends upon arguments of Constructor.
+// And we can create multiple instances like this. 
+
+
+If constructor is private:-
+constructor.setAccessible(true);
+
+Conclusion:- To make Singleton design pattern, use Josua Block's solution --- Use Enums.
+
+
+
+----------------------------------------------------------------
+Superclasses and Interfaces 
+----------------------------------------------------------------
+
+--> getSuperClass().getName();
+
+--> Class[] interfaces = c.getInterfaces();
+
+
+
+----------------------------------------------------------------
+Annotations
+----------------------------------------------------------------
+
+
+@Retention(RetentionPolicy.RUNTIME) //Because we want to detect this annotation with the help of Reflection
+@Target(ElementType.METHOD)
+@interface MyAnnotation{
+	public String name();
+}
+
+public class Person{
+    ..
+    ..
+
+    @MyAnnotation(name="myAnnotation")
+    public String returnName(){
+
+    }
+
+}
+
+//
+Method[] methods = Person.class.getMethods();
+for(Method m:methods){
+    if(m.isAnnotationPresent(MyAnnotation.class))
+        System.out.println(m.getName());
+}
+
+
+
+
+
+
