@@ -1,0 +1,248 @@
+@beforeEach
+@afterEach
+@beforeAll
+@afterAll
+
+Display Names:-
+---------------------
+//@DisplayNameGeneration(DisplayNameGenerator.Simple.class)
+//@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+//@DisplayName("Equals and Not Equals")
+
+//Define your annotation
+class DemoUtilsTest
+
+-------------------------------------------
+Test for Same and NotSame 
+assertSame(p1,p2,"Message")----------> Assert that items refer to the same object. 
+assertNotSame(p1,p2,"Message")-------> Assert that items do not refer to the same object.
+
+Test for True and False 
+assertTrue(P1,"Message") 
+assertFalse(p1,"Message") 
+
+------------------------------------------------------------
+
+Junit Assertions: Arrays, Iterables and Lines 
+**********************************************
+
+assertArrayEquals:- assert that both object arrays are deeply equal 
+assertIterableEquals:-> assert that both object iterables are deeply equal 
+assertLinesMatch:- assert that both lists of Strings match 
+
+
+DemoUtils.java
+String[] stringArray={"A","B","C"};
+public void getFirstThreeLettersOfAlphabet(){
+    return stringArray;
+}
+
+DemoUtilsTest.java 
+String[] stringArray={"A","B","C"};
+assertArrayEquals(stringArray,DemoUtils.getFirstThreeLettersOfAlphabet(),Message);// It will return true 
+
+////////////
+assertIterableEquals()
+Just replace stringArray with Any Iterable like ArrayList, LinkedList, HashSet. 
+
+
+////////////
+assertLinesMatch()----> assert that both lists of strings match 
+
+
+-------------------------------------------------------------------------------
+
+
+Assertions: Throws and Timeout
+*************************************
+assertThrows:- Assert that an executable throws an exception of expected type
+assertThrows(Exception.class,()->{demoUtils.throwException(-1);},"should throw an exception");
+
+assertDoesNotThrow:-
+assertDoesNotThrow(Lambda expression);
+
+assertTimeoutPreemtively:- Assert that an executable completes before given timeout is exceeded
+assertTimeoutPreemtively(Duration.ofSleep(3),()->{demoUtils.checkTimeout();},"Method should not exceed 3 seconds");
+
+---------------------------------------------------------------------------------------
+
+
+Ordering Junit Tests
+******************************
+
+@TestMethodOrder:- Configures the order/sort algorithm for the test methods 
+
+MethodOrderer.DisplayName:- Sort test methods alphanumerically based on display names 
+MethodOrderer.MethodName:- Sort test method alphanumerically based on method names      (Don't use @DisplayName annotation(Sorted with MethodName but DisplayNames will be visible))
+MethodOrderer.randon:- Pseudo-random order based on method names 
+MethodOrderer.OrderAnnotation:- Sorts test methods numerically based on @Order annotation
+
+@TestMethodOrder(MethodOrderer.DisplayName.class)
+class DemoUtilsTest 
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class DemoUtilsTest
+
+
+@Test
+@Order(Order_Number)                        Lower number has highest priority. 
+void testEqualsAndNotEquals()
+
+
+---------------------------------------------------------------------------------------------------------
+
+Code Coverage and Test Reports With Maven 
+********************************
+Run test in eclipse
+
+Go to Project Main directory>>open cmd
+mvn clean test (If not showing Any Test result), so need to configure maven to find unit tests:-
+Add maven surefire plugin
+<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.1.2</version>
+			</plugin>
+		</plugins>
+</build>
+
+Generate unit tests report:-
+maven surefire report plugin can generate HTML unit test report:-
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-surefire-report-plugin</artifactId>
+	<version>3.2.2</version>
+	--To Do--
+</plugin>
+
+
+In To Do:-
+<executions>
+		<execution>
+			<phase>test</phase>
+				<goals>
+					<goal>report</goal>
+				</goals>
+		</execution>
+	</executions>
+It means during, test phase execute plugin goal report. (maven-surefire-report-plugin:report)
+
+mvn clean test (Run tests and executes Surefire Report plugin to generate HTML reports)
+mvn site -DgenerateReports=false (Add website resources imgages,css etc...) (false== Don't overwrite existing HTML reports)
+
+
+View Unit Test Reports:-
+-----------------------------
+target/site/surefire-report.html 
+
+
+Handling Test Failures:-
+--------------------------------
+By Default, maven Surefire plugin will not generate reports if tests fail. 
+<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.1.2</version>
+                <configuration>
+                    <testFailureIgnore>true</testEqualsAndNotEquals>
+                </configuration>
+			</plugin>
+		</plugins>
+</build>
+Maven does not give report if test fails.
+
+
+By default, maven surefire plugin will not show @DisplayName in reports
+-----------------------------------------------------------------------------
+maven.apache.org/surefire>> maven surefire plugin>> Using junit plateform>> ...for @DisplayName 
+<plugin>
+    ...
+    <artifactId>maven-surefire-plugin</artifactId>
+    ...
+    <configuration>
+        <testFailureIgnore>true</testFailureIgnore>
+        <statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+        <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
+    </statelessTestsetReporter>
+    </configuration>
+</plugin> 
+
+
+
+---------------------------------------------------------------------------
+Generate code coverate report:-
+**********************************
+JaCoCo is a free code coverage library. 
+JaCoCo provides free maven plugin to generate code coverage reports. 
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.11</version>
+    <executions>
+        <execution>
+            <id>jacoco-prepare</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>jacoco-report</id>
+            <phase>test</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+
+mvn clean test 
+target/site/JaCoCo/index.html
+
+---------------------------------------------------------------------------------------------------------
+
+
+Conditional Tests:-
+***************************
+We may not need to run all the tests ...
+@Disabled:- Disable a test method 
+@Disabled(Message)
+
+@EnabledOnOs:- Enable test when when running on a given operating system.
+@EnabledOnOs(OS.WINDOWS)
+@EnabledOnOs({OS.MAC,OS.WINDOWS})
+
+Annotations can be applied on class level or method level. 
+
+@EnabledOnJre
+@EnabledOnJre(JRE.JAVA_17)
+
+@EnabledForJreRange
+@EnabledForJreRange(MIN=JRE.JAVA_13,MAX=JRE.JAVA_17)
+@EnabledForJreRange(MIN=JRE.JAVA_11)
+
+@EnabledIfSystemProperty:-   Enable test based on system property 
+@EnabledIfSystemProperty(named="LUV2CODE_SYS_PROP",matches="CI_CD_DEPLOY")
+
+@EnabledIfEnvironmentVariable:-  Enable test based on environment variable 
+@EnabledIfEnvironmentVariable(named="LUV2CODE_ENV",matches="DEV")
+
+
+--------------------------------------------------------------------------------------------------------------
+
+Unit Test: Mocking with Mockito 
+***************************************
+
+
+
+
+
+
+
+
+
+
+
