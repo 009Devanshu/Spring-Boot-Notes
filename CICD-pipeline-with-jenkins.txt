@@ -191,11 +191,59 @@ cd /var/lib/tomcat9/
     ls
     You will get all the files including tomcat-users.xml
 vim tomcat-users.xml
+(or directly--> vim /var/lib/tomcat9/conf/tomcat-users.xml)
 
 systemctl restrat tomcat9
 
 
+Now, come to Jenkins:-
+add plugins ---> maven integration and deploy to container
+tools---> add jdk 
+(How would you give JAVA_HOME path to add java in tool
+    in powershell---> echo $JAVA_HOME (It will give location of JAVA_HOME path)
+    /usr/lib/jvm/java-17-openjdk-amd64
+)
+And for maven--> automatic install (We are talking about tools. Haha do you remember)
+---------------------------------------------------------------------------------------------------
 
+Now, creating First project:-
+In build-step, we are using 'execute shell' (Since we are using Ubuntu)
+    echo "this is testing jenkins command"
+
+Lets create a new project for java (A simple java program)
+For Git:- add url 
+Build steps
+    javac Main.java 
+    java Main 
+
+
+Another Prject:
+In build step:  
+    top level maven target
+        clean install 
+post build step 
+ add container 
+    war file--> target/*.war 
+    contextpath 
+    tomcat url:- awsurl:8081 (or whatever)
+   And you got fucking exception. 
+    apt install tomcat9-admin  (But, first sudo su (I don't know why it is needed sometimes.))
+    Restart the server 
+        Now you can access:- url:8081/manager 
+
+
+If ip address of aws is changing again, associate elastic ip address to your running ec2 instance:-
+allocate elastic ip address and then associate that ip address to your running ec2 instance.
+Now, you can use ip address given by associated elastic ip address.
+
+
+
+---------------------------------------------------------------------------------
+**************************************
+Now, working with CI/CD pipeline
+**************************************
+Till now, we were creating freestyle project and doing there some manual work.
+I mean, we will create script now.
 
 
 
