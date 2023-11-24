@@ -244,6 +244,13 @@ Now, working with CI/CD pipeline
 **************************************
 Till now, we were creating freestyle project and doing there some manual work.
 I mean, we will create script now.
+We can create two types of script 
+    declarative 
+
+
+Troubleshooting connection timeout:-
+Turn windows features on or off>> mark telnet>>
+    
 
 
 
