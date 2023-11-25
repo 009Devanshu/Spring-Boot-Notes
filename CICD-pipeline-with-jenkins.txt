@@ -247,12 +247,99 @@ I mean, we will create script now.
 We can create two types of script 
     declarative 
 
+(We can write script in groovy aaayen!!)   (we will not create freestyle project, we will manually write steps)
+Choose pipeline project 
+IN pipeline section, select pipeline script and choose simple script. 
+pipeline{
+    agent any
+    stages{
+        stage("build"){
+            
+            steps{
+                sh 'echo "Building Applications"'
+            }
+            
+        }
+        stage("test"){
+            
+            steps{
+                sh 'echo "Testing Applications"'
+            }
+            
+        }
+        stage("deploy"){
+            
+            steps{
+                sh 'echo "Deploying Applications"'
+            }
+            
+        }
+    }
+}
+Apply save and build.
 
-Troubleshooting connection timeout:-
-Turn windows features on or off>> mark telnet>>
     
+Another project  
+    Create a folder in local drive (PIPELINE-EXAMPLE-GIT)
+        Test.java  (Some Sop statements in main method)
+        Jenkinsfile
+            Write pipeline script in this file 
+            pipeline{
+            agent any 
+            stages{
+                stage("compile"){
+                steps{
+                    sh 'javac Test.java'
+                }
+                }
+                stage("run"){
+                steps{
+                    sh 'java Test'
+                }
+                }
+            }
+        }
+    Select poll scm 
+    In pipeline section     
+        pipeline script from scm and give url of git. 
+        appy, save and build. 
+
+    For post build steps:-
+        pipeline{
+            agent any 
+            stages{
+                ...
+                ...
+            }
+            post{
+                always{
+                    sh 'echo "always"'
+                }
+                success{
+                    sh 'echo "success"'
+                }
+                failure{
+                    sh 'echo "failure"'
+                }
+            }
+        }            
 
 
+We can also add environment
+pipeline{
+    ...
+    environment{
+        VERSION_NAME="1.34"
+    }
+    stages{
+        ..
+        steps{
+            sh 'echo "${VERSION_NAME}"'
+        }
+        ...
+    }
+    ..
+}
 
 
 
