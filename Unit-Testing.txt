@@ -1,21 +1,25 @@
 @beforeEach
 @afterEach
-@beforeAll
-@afterAll
+@beforeAll (should be static) 
+@afterAll (should be static)
 
 Display Names:-
 ---------------------
-//@DisplayNameGeneration(DisplayNameGenerator.Simple.class)
-//@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-//@DisplayName("Equals and Not Equals")
+Define these annotations on class:-
+//@DisplayNameGeneration(DisplayNameGenerator.Simple.class) ----> Removes trailing parentheses from test method name
+//@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)----> Replaces underscores in test method name with spaces
+//@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class) ----> Generate sentence based on test class name and test method name
 
-//Define your annotation
-class DemoUtilsTest
+Define this annotation on method:-
+//@DisplayName("Equals and Not Equals")  (No need to write annotations above along with this)
+
+
 
 -------------------------------------------
 Test for Same and NotSame 
 assertSame(p1,p2,"Message")----------> Assert that items refer to the same object. 
 assertNotSame(p1,p2,"Message")-------> Assert that items do not refer to the same object.
+
 
 Test for True and False 
 assertTrue(P1,"Message") 
@@ -56,13 +60,53 @@ assertLinesMatch()----> assert that both lists of strings match
 Assertions: Throws and Timeout
 *************************************
 assertThrows:- Assert that an executable throws an exception of expected type
-assertThrows(Exception.class,()->{demoUtils.throwException(-1);},"should throw an exception");
-
-assertDoesNotThrow:-
 assertDoesNotThrow(Lambda expression);
 
-assertTimeoutPreemtively:- Assert that an executable completes before given timeout is exceeded
-assertTimeoutPreemtively(Duration.ofSleep(3),()->{demoUtils.checkTimeout();},"Method should not exceed 3 seconds");
+public class DemoUtils {
+public String throwException(int a) throws Exception {
+    if (a < 0) {
+    throw new Exception("Value should be greater than or equal to 0");
+    }
+    return "Value is greater than or equal to 0";
+    }
+}
+
+public class DemoUtilsTest{
+    ..
+    DemoUtils demoUtils = new DemoUtils();
+    
+    @DisplayName("Throws and Does Not Throw")
+    @Test
+    void testThrowsAndDoesNotThrow() {
+        assertThrows(Exception.class, () -> { demoUtils.throwException(-1); }, "Should throw exception");
+        assertDoesNotThrow(() -> { demoUtils.throwException(5); }, "Should not throw exception");
+    }
+}
+
+
+
+
+assertTimeoutPreemtively:- Assert that an executable completes before given timeout is exceeded (execution is preemtively aborted if timeout exceeded)
+
+public class DemoUtils {
+public void checkTimeout() throws InterruptedException {
+    System.out.println("I am going to sleep");
+    Thread.sleep(2000);
+    System.out.println("Sleeping over");
+    }
+}
+We will make sure that method does not oversleep:-
+
+class DemoUtilsTest {
+DemoUtils demoUtils;
+    ...
+    @DisplayName("Timeout")
+    @Test
+    void testTimeout() {
+    assertTimeoutPreemptively(Duration.ofSeconds(3), () -> { demoUtils.checkTimeout(); },"Method should execute in 3 seconds");
+    }
+}
+
 
 ---------------------------------------------------------------------------------------
 
@@ -232,6 +276,229 @@ Annotations can be applied on class level or method level.
 
 
 --------------------------------------------------------------------------------------------------------------
+
+*******************************************
+TEST DRIVEN DEVELOPMENT
+*******************************************
+
+Traditional development 
+------------------------
+Design----> Code----> Test 
+
+
+TDD 
+----
+First, write a failing test----> Write Code to make the test pass----> Refactor and improve on design----> Repeat process for next test 
+
+
+We will use FizzBuzz project as an example:-
+Development process:-
+Write a failing test 
+Write code to make the test pass 
+Refactor the code 
+Repeat the process 
+
+FizzBuzz
+    src/main/java   
+        com.devanshu.fizzbuzz 
+            FizzBuzzApplication.java 
+        com.devanshu.tdd 
+    src/main/resources
+    src/test/java 
+        com.devanshu.tdd 
+            FizzBuzzTest.java 
+    ..
+    ..
+    pom.xml 
+
+
+
+src/test/java 
+    com.devanshu.tdd 
+        FizzBuzzTest.java 
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        class FizzBuzzTest {
+
+            @DisplayName("divisible by three")
+            @Test
+            @Order(1)
+            void testForDivisibilityByThree() {
+                fail("fail");
+            }
+        }
+Definitely it will fail. 
+
+src/test/java 
+    com.devanshu.tdd 
+        FizzBuzzTest.java 
+            @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+            class FizzBuzzTest {
+
+                @DisplayName("divisible by three")
+                @Test
+                @Order(1)
+                void testForDivisibilityByThree() {
+                    String expected = "Fizz";
+                    assertEquals(expected,FizzBuzz.compute(3),"It should return Fizz");
+                }
+            }
+Definitely, unit test will fail.
+
+src/main/java
+    com.devanshu.tdd 
+        FizzBuzz.java 
+            public class Fizz{
+                public static String compute(int i){
+                    return null;
+                }
+            }
+Definitely the unit test will fail. 
+
+src/main/java
+    com.devanshu.tdd 
+        FizzBuzz.java 
+            public class Fizz{
+                public static String compute(int i){
+                    if(i%3==0)
+                        return "Fizz";
+                    return null;
+                }
+            }
+It will pass. 
+..
+..
+and so on. 
+
+
+Final code will be like:-
+src/test/java 
+    com.devanshu.tdd 
+        FizzBuzzTest.java 
+            @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+            class FizzBuzzTest {
+
+                @DisplayName("divisible by three")
+                @Test
+                @Order(1)
+                void testForDivisibilityByThree() {
+                    String expected = "Fizz";
+                    assertEquals(expected,FizzBuzz.compute(3),"should return Fizz");
+                }
+                @DisplayName("divisible by five")
+                @Test
+                @Order(2)
+                void testForDivisibilityByFive() {
+                    String expected = "Buzz";
+                    assertEquals(expected,FizzBuzz.compute(5),"should return Buzz");
+                }
+                
+                @DisplayName("divisible by three and five")
+                @Test
+                @Order(3)
+                void testForDivisibilityByThreeAndFive() {
+                    String expected = "FizzBuzz";
+                    assertEquals(expected,FizzBuzz.compute(15),"should return FizzBuzz");
+                }
+                @DisplayName("divisible by three or five")
+                @Test
+                @Order(4)
+                void testForDivisibilityByThreeOrFive() {
+                    String expected = "7";
+                    assertEquals(expected,FizzBuzz.compute(7),"should return 1");
+                }
+            }
+src/main/java
+    com.devanshu.tdd 
+        FizzBuzz.java 
+            public class FizzBuzz {
+                public static String compute(int i) {
+                    if(i%3==0 && i%5==0)
+                        return "FizzBuzz";
+                    if(i%3==0)
+                        return "Fizz";
+                    if(i%5==0)
+                        return "Buzz";
+                    return Integer.toString(i);
+                }
+
+            }
+
+
+FizzBuzz code refactoring:-
+--------------------------------
+public static String compute(int i) {
+		
+		StringBuffer sb = new StringBuffer();
+		
+		if(i%3==0)
+			sb.append("Fizz");
+		if(i%5==0)
+			sb.append("Buzz");
+//		if(i%3!=0 && i%5!=0)
+//			sb.append(i);
+		if(sb.isEmpty())
+			sb.append(i);
+		
+		return sb.toString();
+}
+
+
+Parameterized Test: Overview
+-----------------------------------
+
+@ParameterizedTest:- JUnit will run the test multiple times and supply the data (Does looping for us)
+Source of Values 
+@ValueSource--------> Array of values: Strings, ints, doubles, floats etc 
+@CsvSource----------> Array of CSV string values 
+@CsvFileSource------> CSV values read from a file 
+@EnumSource---------> Enum constant values 
+@MethodSource-------> Custom method for providing values 
+
+Using @CsvFileSource 
+---------------------
+src/test/java 
+    resources
+        small-test-data.csv 
+            1,1
+            2,2
+            3,Fizz 
+            ..
+            ..
+
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        class FizzBuzzTest
+        {
+             @DisplayName("Testing with small data file")
+                @ParameterizedTest(name="value={0},expected={1}")
+                @CsvFileSource(resources="/small-test-data.csv")
+                @Order(5)
+                void testSmallDataFile(int value,String expected) 
+                {
+                    assertEquals(expected,FizzBuzz.compute(value),"");
+                }
+
+        }
+Now, write main application:-
+src/main/java 
+    com.devanshu.tdd 
+        MainApp.java 
+            public class MainApp {
+
+                public static void main(String[] args) {
+                    for(int i=1;i<=100;i++) {
+                        System.out.println(FizzBuzz.compute(i));
+                    }
+                }
+
+            }
+
+       
+
+
+
+
+
+
 
 Unit Test: Mocking with Mockito 
 ***************************************
