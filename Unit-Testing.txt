@@ -492,17 +492,292 @@ src/main/java
 
             }
 
-       
+-------------------------------------------------------------------------------------------------------
+
+*******************************************
+Spring Boot unit testing support
+*******************************************
+
+Why do you need spring boot unit testing?
+    > Access to the spring application context 
+        Once the application context is loaded, we can inject some beans 
+        Example: 
+                @Component
+                public class StudentGrades{
+
+                }
+
+                @SpringBootTest
+                public class ApplicationExampleTest{
+                    
+                    @Autowired
+                    StudentGrades studentGrades;
+
+                    void basicTest(){
+                    
+                        ////
+                    }
+                }
+    > Support for spring dependency injection 
+    > Retrieve data from spring application.properties 
+        Example:
+                info.school.name=luv2code 
+                info.app.name=My Super Cool Gradebook
+
+                @SpringBootTest
+                public class ApplicationExampleTest{
+                    
+                    @Value("${info.school.name}")
+                    private String schoolName;
+
+                    @Value("${info.app.name}")
+                    private String appInfo;
+
+                    void basicTest(){
+                    
+                        ////
+                    }
+                }                
+
+    > We can access ApplicationContext directly 
+                 @SpringBootTest
+                public class ApplicationExampleTest{
+                    
+                    @Autowired
+                    ApplicationContext context;
+
+                    void basicTest(){
+                    
+                        ////
+                    }
+                }                
+    > etc. 
+
+@SpringBootTest 
+    > Access to the spring application context 
+    > Support for spring dependency injection 
+    > Retrieve data from spring application.properties 
+    > We can access ApplicationContext directly
+    > etc. 
+
+Spring Boot starter for testing support 
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+You can check all the dependencies 
+    mvn dependency:tree (In terminal<---- Right click on project>> Show in local terminal>> Terminal)
+
+
+Main Application package == test package (We are fine)
+Otherwise
+    @SpringBootTest(classes=MainSpringBootClassName.class)
+    public class ApplicationExampleTest{
+
+    }
+
+
+Working on Project:-
+----------------------
+2.00-starting project   (devanshu.official09@gmail.com  google_drive>> spring-boot-unit-testing-main)
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Just for knowledge:-
+---------------------
+@SpringBootApplication
+public class ApplicationClass
+{
+    public static void main(String args[])
+    {
+        SpringApplication.run(ApplicationClass.class,args);
+    }
+    //You can do 
+    @Bean(name="collegeStudent")
+    @Scope(value="prototype")
+    public CollegeStudent getStudent()
+    {
+        return new CollegeStudent();
+    }
+}
+In test package class:-
+
+    @Autowired 
+    ApplicationContext context;
+    void basicTest 
+    {
+        CollegeStudent student2 = context.getBean("collegeStudent",CollegeStudent.class)
+    }
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----------------------------------------------------------------------------------------------------------------------------
+
+**********************
+Mockito Framework
+**********************
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+
+Unit tests with mock has following structure:-
+----------------------------------------------
+setup(Set expectations with mock responses)-------->Execute(Call the method you want to test)---------->
+Assert(Check the result and verify that it is the expected result)-------------->Verify(Optionally...verify calls(how many times called etc))
+
+Development Process for project 2.20-starter project:-
+-----------------------
+1. Create Mock for DAO 
+2. Inject mock into Service 
+3. Setup expectations
+4. Call method under test and assert results 
+5. Verify the method calls 
+
+Project Number-- 2.20-Starter project 
 
 
 
 
 
+In the project:-
 
 
-Unit Test: Mocking with Mockito 
-***************************************
 
+@DisplayName("whena & verify")
+@Test
+public void assertEqualsTestAddGrades() {
+    when(applicationDao.addGradeResultsForSingleClass(
+                studentGrades.getMathGradeResults())).thenReturn(100.0);
+    
+    assertEquals(100,applicationService.addGradeResultsForSingleClass(
+                studentGrades.getMathGradeResults()));
+    
+    verify(applicationDao).addGradeResultsForSingleClass(studentGrades.getMathGradeResults());
+    
+    verify(applicationDao,times(3)).addGradeResultsForSingleClass(studentGrades.getMathGradeResults());
+
+}
+
+
+
+MockBean Overview:-
+--------------------------------
+
+@Mock
+private ApplicationDao applicationDao;
+
+@InjectMocks                                            (Will only inject dependencies annotated with @Mock or @Spy)
+private ApplicationService applicationService;
+
+
+
+
+> Instead of using Mockito: @Mock and @InjectMocks 
+> Use Spring Boot support: @MockBean and @Autowired
+
+> MockBean 
+    @MockBean to add mock objects to the Spring application context. The mock will replace any existing bean of the same type in the application context. If no bean of the same type is defined, a new one will be added. 
+
+
+So the code will change to:-
+@MockBean 
+private ApplicationDao applicationDao;
+
+@Autowired                                            
+private ApplicationService applicationService;
+
+
+Throwing Exceptions with Mocks:-
+--------------------------------------
+Possible use case:-
+    Testing how the code handles exceptions. 
+
+Here, we will mock the DAO to throw exception.
+@DisplayName("throw runtime exception")
+@Test
+public void throwAnException() {
+    CollegeStudent nullStudent = (CollegeStudent)context.getBean("collegeStudent");
+    
+    //when(applicationDao.checkNull(nullStudent)).thenThrow(new RuntimeException());
+	doThrow(new RuntimeException()).when(applicationDao).checkNull(nullStudent);
+    
+    assertThrows(RuntimeException.class,()->{applicationService.checkNull(nullStudent);});
+    
+    verify(applicationDao,times(1)).checkNull(nullStudent);
+}
+
+We can make consecutive calls: 
+@DisplayName("Multiple Stubbing")
+@Test
+public void stubbingConsecutinveCalls() {
+    CollegeStudent nullStudent = (CollegeStudent)context.getBean("collegeStudent");
+    
+    when(applicationDao.checkNull(nullStudent))
+                    .thenThrow(new RuntimeException())                      //First call.. throw exception 
+                    .thenReturn("do not throw exception second time");      //consecutive call..do not throw exception. Just return a String 
+    
+    assertThrows(RuntimeException.class,()->{
+        applicationService.checkNull(nullStudent);
+        });
+    assertEquals("do not throw exception second time",applicationService.checkNull(nullStudent));
+    verify(applicationDao,times(2)).checkNull(nullStudent);
+}
+
+---------------------------------------------------------------------------------------------------
+****************************************
+Section 6: Reflection Test Utils 
+****************************************
+
+special cases during testing:-
+> Need to access non-public fields
+    > Read the fiels value. 
+    > Set the fields value. 
+> Invoke non-public methods. 
+
+public class CollegeStudent 
+{
+    ...
+    private int id;
+    ...
+}
+
+DemoTest.java 
+CollegeStudent theStudent = (CollegeStudent)context.getBean("collegeStudent");
+ReflectionTestUtils.getField(theStudent,"id");             (ReflectionTestUtils is from spring framework, theStudent is target object and id is the field value)
+ReflectionTestUtils.setField(theStudent,"id",1);                         
+
+How to ---> 
+We can first set the value 
+ReflectionTestUtils.setField(theStudent,"id",1);   
+Now, we can do assertion 
+assertEquals(1,ReflectionTestUtils.getField(theStudetn,"id"));
+
+
+For private methods:-
+-----------------------------
+public class CollegeStudent 
+{
+    ...
+    private String getFirstNameAndId(){
+        return getFirstName() + " " + getId();
+    }
+    ...
+}
+
+DemoTest.java 
+CollegeStudent theStudent = (CollegeStudent)context.getBean("collegeStudent");
+ReflectionTestUtils.invokeMethod(theStudent,"getFirstNameAndId");
+
+
+----------------------------------------------------------------------------------------------
+
+******************************************************************************
+Section 7: Testing SpringBoot MVC Web Apps - Database Integration Testing 
+******************************************************************************
 
 
 
