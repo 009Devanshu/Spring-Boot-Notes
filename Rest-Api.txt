@@ -119,7 +119,7 @@ Key Details:
 	Survey: id, title, description, questions 
 	Survey Questions: id, description, options, correctAnswer
 
->>Got to github for step 06
+>>Go to github for step 06
 
 
 

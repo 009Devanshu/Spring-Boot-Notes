@@ -788,7 +788,7 @@ Validations with Spring Boot
 		</dependency>
 
 2. Command Bean (Form backing object)
-		Since we are binding only description using @RequestParam. But the code become complex there many things to bind. Instead of binding parameters with @RequestParam,
+		Since we are binding only description using @RequestParam. But the code become complex when many things to bind. Instead of binding parameters with @RequestParam,
 		we can directly bind them to the bean (ToDo).
 	
 	
