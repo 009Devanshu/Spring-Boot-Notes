@@ -1,0 +1,231 @@
+Creating Project (Soap-Course-Management):-
+----------------------------------------------
+Dependencies
+    Spring Web Services (SOAP)    [Not Spring Web]
+    Jpa 
+    h2  
+
+We will create simple Soap web service using Spring Web Services. Spring Web Services promotes a contract-first approach to create web services. I means you would actually define the format of the request and the response before you would start with developing your web services. 
+We would define XMLs for our request and response, and to format request and respose we use XSD. (XSD- Xml Schema Definition)  
+
+For Service Definition -- XML, XSD, WSDL 
+XML Java Binding --(JAXB) Since we are using java, xml should converted to java object and should be converted to     xml after coming to and going from Web Service Provider respectively.
+Framework Configuration -- Endpoint, WSDL-Generation 
+Soap Web Server Client -- Wizdler Chrome Plugin  
+
+
+                SOAP XML request
+Web Service--------------------------------> Web Service        (Here Web Service Provider is SOAP)  
+Client     <-------------------------------- Provider   
+                SOAP XML response
+
+
+*****************************************************
+Step 3: Define Request and Response XML structure 
+*****************************************************
+
+Main Project 
+    example-files (A Folder)
+        request.xml 
+        response.xml 
+
+
+request.xml 
+------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<GetCourseDetailsRequest xmlns="http://in28minutes.com/courses">
+	<id>value</id>
+</GetCourseDetailsRequest>
+
+
+response.xml 
+-----------------
+<GetCourseDetailsResponse xmlns="http://in28minutes.com/courses">
+	<CourseDetails>
+		<id>123</id>
+		<name>Spring in28minutes</name>
+		<description>You would learn the basics of spring framework</description>
+	</CourseDetails>
+</GetCourseDetailsResponse>
+
+
+We will define validations using XSD in next lecture
+
+
+************************************************************************************
+Step 4: Define XML Schema Definition (XSD) for request - GetCourseDetailsRequest  
+************************************************************************************
+
+In example-files 
+    course-details.xsd       (Choose XML Schema file)
+
+course-details.xsd
+----------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+targetNamespace="http://in28minutes.com/courses" 
+xmlns:tns="http://in28minutes.com/courses" elementFormDefault="qualified">
+	<element name="GetCourseDetailsRequest">
+		<complexType>
+			<sequence>
+				<element name="id" type="integer"></element>
+			</sequence>
+		</complexType>
+	</element>
+</schema>
+
+
+request.xml
+-----------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<GetCourseDetailsRequest xmlns="http://in28minutes.com/courses" 
+xsi:schemaLocation="http://in28minutes.com/courses course-details.xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<id>100</id>
+</GetCourseDetailsRequest>
+
+
+***********************************************************************************
+Step 5: Define XML Schema Definition (XSD) for response - GetCourseDetailsResponse
+***********************************************************************************
+course-details.xsd
+------------------------
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://in28minutes.com/courses"
+xmlns:tns="http://in28minutes.com/courses" elementFormDefault="qualified">
+...
+..
+    <element name="GetCourseDetailsResponse">
+		<complexType>
+			<sequence>
+				<element name="CourseDetails" type="tns:CourseDetails"></element>
+			</sequence>
+		</complexType>
+	</element>
+	<complexType name="CourseDetails">
+		<sequence>
+			<element name="id" type="integer"></element>
+			<element name="name" type="string"></element>
+			<element name="description" type="string"></element>
+		</sequence>
+	</complexType>
+
+</schema>
+
+response.xml
+---------------
+<?xml version="1.0" encoding="UTF-8"?>
+<GetCourseDetailsResponse xmlns="http://in28minutes.com/courses"
+xsi:schemaLocation="http://in28minutes.com/courses course-details.xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
+	<CourseDetails>
+		<id>123</id>
+		<name>Spring in28minutes</name>
+		<description>You would learn the basics of spring framework</description>
+	</CourseDetails>
+</GetCourseDetailsResponse>
+
+******************************************************************************
+Step 6: More about XML schema definition and implementing XSD best practices
+******************************************************************************
+In course-details.xsd
+---------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+targetNamespace="http://in28minutes.com/courses" 
+xmlns:tns="http://in28minutes.com/courses" elementFormDefault="qualified">
+	<xs:element name="GetCourseDetailsRequest">
+        <xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="xs:integer"/>
+			</xs:sequence>
+		</xs:complexType>
+    </xs:element>
+	<xs:element name="GetCourseDetailsResponse">
+		
+        
+        <xs:complexType>
+			<xs:sequence>
+				<xs:element name="CourseDetails" type="tns:CourseDetails"/>
+			</xs:sequence>
+		</xs:complexType>
+    </xs:element>
+	<xs:complexType name="CourseDetails">
+		<xs:sequence>
+			<xs:element name="id" type="xs:integer"/>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="description" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
+
+
+************************************************************************************
+Step 7: Introduction to Java API for XML Binding (JAXB) and configuring JAXB2
+************************************************************************************
+
+
+                SOAP XML request
+Web Service--------------------------------> Web Service        (Here Web Service Provider is SOAP)  
+Client     <-------------------------------- Provider   
+                SOAP XML response
+
+We will use JAXB for doing this. 
+This JAXB will take our XSD and create java objects. 
+
+
+Copy course-details.xsd under application.properties so that it will be available to use in our java application.
+Take the structure from course-details.xsd and create java objects that would allow me to create xml in that structure. 
+
+In plugins in pom.xml file, we will do below things:-
+<!--JAXB2 maven plugin-->
+<!--XSD Source Folder-->
+<!--Java Object Source Folder-->
+<!-- Clear Folder -> false-->
+
+Google search > JAXB2 maven plugin 
+You can go into site> Mojohaus.org>> XJC:Basic Examples>> Copy plugin 
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>jaxb2-maven-plugin</artifactId>
+    <version>${project.version}</version>
+    <executions>
+        <execution>
+            <id>xjc</id>
+            <goals>
+                <goal>xjc</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <!-- The package of your generated sources -->
+        <packageName>com.example.myschema</packageName>
+    </configuration>
+</plugin> 
+
+
+Update your plugin for spring boot 3.1.0
+--------------------------------------------------
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>jaxb2-maven-plugin</artifactId>
+    <version>3.1.0</version>
+    <executions>
+        <execution>
+            <id>xjc</id>
+            <goals>
+                <goal>xjc</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <sources>
+            <source>
+                ${project.basedir}/src/main/resources/course-details.xsd</source>
+        </sources>
+        <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+        <clearOutputDir>false</clearOutputDir>
+    </configuration>
+
+</plugin>
