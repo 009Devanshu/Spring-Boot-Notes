@@ -779,15 +779,253 @@ ReflectionTestUtils.invokeMethod(theStudent,"getFirstNameAndId");
 Section 7: Testing SpringBoot MVC Web Apps - Database Integration Testing 
 ******************************************************************************
 
+Project- spring-boot-mvc-testing-demo
+
+We will use TDD in this project:-
+For DAOs, we will use Spring Data Jpa.
+For database, we will use H2 database (in-memory, embedded db)
+    > In memory, embedded db is good for testing. 
+    > Quickly set-up and tear down. 
+    > No network latency so tests run faster. 
+
+src/test/java 
+    com.luv2code.springmvc
+        @TestPropertySource("/application.properties")
+        @SpringBootTest
+        public class StudentAndGradeServiceTest {
+
+            @Autowired
+	        private StudentAndGradeService studentService;
+	
+            @Autowired
+            private StudentDao studentDao;
+
+            @Test
+            public void createStudentService() {
+                
+                studentService.createStudent("Chad","Darby","chad.darby@luv2code_school.com");
+                
+                CollegeStudent student = studentDao.findByEmailAddress("chad.darby@luv2code_school.com");
+                
+                assertEquals("chad.darby@luv2code_school.com",student.getEmailAddress());
+            }
+        }
+We run the test (We are using TDD approach) and obviously we will fail the test. 
+
+Now, create a service package and create class StudentAndGradeService
+src/main/java 
+    com.luv2code.springmvc.service
+        @Service
+        @Transactional
+        public class StudentAndGradeService {
+
+            @Autowired
+            private StudentDao studentDao;
+            
+            public void createStudent(String firstName,String lastName,String emailAddress) {
+                CollegeStudent student = new CollegeStudent(firstName,lastName,emailAddress);
+                student.setId(0);
+                studentDao.save(student);
+            }
+        }
+You can see in the above classes that we want to leverage StudentDao repository which does not exist right now. So, we will create 
+a package for DAO and create a repo in that 
+src/main/java 
+    com.luv2code.springmvc.repository 
+        @Repository
+        public interface StudentDao extends CrudRepository<CollegeStudent,Integer>{
+
+            public CollegeStudent findByEmailAddress(String emailAddress);
+        }
+When we run this test. It is passed. 
+
+How is it possible that we are saving the college student and retrieving it using StudentDao, however we did not configure 
+the database in application.properties, although the dependency for embedded database H2 is added in pom.xml file? 
+Ans:- Since we have added the dependency for H2 database. Spring will autoconfigure for us. 
+
+Now, we test whether a student exist or not:-
+---------------------------------------------------
+src/main/test 
+    com.luv2code.springmvc
+        StudentAndGradeServiceTest
+            @TestPropertySource("/application.properties")
+            @SpringBootTest
+            public class StudentAndGradeServiceTest {
+
+                ..
+                ..
+                @Test
+                public void isStudentNullCheck() {
+                    assertTrue(studentService.checkIfStudentIsNull(1));
+                    assertFalse(studentService.checkIfStudentIsNull(0));	
+                }
+            }
+
+src/main/java 
+    com.luv2code.springmvc.service
+        StudentAndGradeService
+            @Service
+            @Transactional
+            public class StudentAndGradeService{
+                ..
+                ..
+                public boolean checkIfStudentIsNull(int i) {
+                    Optional<CollegeStudent> student = studentDao.findById(i);
+                    if(student.isPresent()) {
+                        return true;
+                    }
+                    return false;
+	            }
+            }
+When we run this test, it is failed. So, we need to insert data before running the test. 
+
+ 
+Database Integration Testing - Setup and CleanUp - Overview 
+ -----------------------------------------------------------------
+When we are performing integration testing with a database 
+    Each test should run from a known state. (We know what is in the database) and to accomplish this, we can 
+    use annotations @BeforeEach and @AfterEach. In @BeforeEach, we will insert some sample data and in @AfterEach, 
+    we will clean-up the data. 
+
+    Before each test Perform initialization 
+        Insert sample data 
+
+    After each perform clean up 
+        Delete the sample data 
 
 
 
+src/main/test 
+    com.luv2code.springmvc
+        StudentAndGradeServiceTest
+            @TestPropertySource("/application.properties")
+            @SpringBootTest
+            public class StudentAndGradeServiceTest {
+
+                @Autowired
+                private JdbcTemplate jdbc;
+                
+                ..
+                ..
+                
+                @BeforeEach
+                public void setupDatabase() {
+                    jdbc.execute("insert into student(id,firstname,lastname,email_address) "+
+                            "values('1','Eric','Roby','eric.roby@luv2code_school.com')");
+                }
+                
+                @Test
+                public void createStudentService() {
+                    
+                    studentService.createStudent("Chad","Darby",
+                            "chad.darby@luv2code_school.com");
+                    
+                    CollegeStudent student = studentDao.findByEmailAddress("chad.darby@luv2code_school.com");
+                    
+                    assertEquals("chad.darby@luv2code_school.com",student.getEmailAddress());
+                }
+                
+                
+                
+                @Test
+                public void isStudentNullCheck() {
+                    assertTrue(studentService.checkIfStudentIsNull(1));
+                    assertFalse(studentService.checkIfStudentIsNull(0));	
+                }
+                
+                @AfterEach
+                public void setupAfterTransaction() {
+                    jdbc.execute("delete from student");
+                }
+            }
+
+-------------------------------------------
+StudentAndGradeService: Delete Student
+--------------------------------------------
+In our test class:-
+@Test
+public void deleteStudentService() {
+    Optional<CollegeStudent> deletedCollegeStudent = studentDao.findById(1);
+    assertTrue(deletedCollegeStudent.isPresent(),"Return true");
+    studentService.deleteStudent(1);
+    deletedCollegeStudent =  studentDao.findById(1);
+    assertFalse(deletedCollegeStudent.isPresent(),"Return false");
+}
 
 
+In StudentAndGradeService.java :-
+public void deleteStudent(int i) {
+    if(checkIfStudentIsNull(i))
+        studentDao.deleteById(i);
+    
+}
 
 
+----------------------------------------------------
+Review Database Configs in application.properties
+----------------------------------------------------
+spring.datasource.initialization-mode=always
+(Automatically creates database schema regardlesss of Datasource type)
+
+spring.jpa.hibernate.ddl-auto=create-drop
+(Drop existing tables then create new tables
+After Operations are done, drop the database schema
+Commonly used for integration testing)
 
 
+--------
+@Sql
+--------
+src/main/resources
+    insertData.sql 
+        insert into student(id,firstname,lastname,email_address) values(11,'Student','One','student.one@luv2code_school.com');
+        insert into student(id,firstname,lastname,email_address) values(12,'Student','Two','student.two@luv2code_school.com');
+        insert into student(id,firstname,lastname,email_address) values(13,'Student','Three','student.three@luv2code_school.com');
+        insert into student(id,firstname,lastname,email_address) values(14,'Student','Four','student.four@luv2code_school.com');
+
+src/main/test 
+    com.luv2code.springmvc
+        @TestPropertySource("/application.properties")
+        @SpringBootTest
+        public class StudentAndGradeServiceTest{
+            ..
+            ..
+            @Sql("/insertData.sql")
+            @Test
+            public void getGradebookService() {
+                Iterable<CollegeStudent> iterableCollegeStudents= studentService.getGradebook();
+                
+                List<CollegeStudent> collegeStudents = new ArrayList<>();
+                
+                for(CollegeStudent collegeStudent:iterableCollegeStudents) {
+                    collegeStudents.add(collegeStudent);
+                }
+                
+                assertEquals(5, collegeStudents.size());
+            }
+        
+            ..
+            ..
+        }
+
+src/main/java 
+    com.luv2code.springmvc.service
+        @Service
+        @Transactional
+        public class StudentAndGradeService
+        {
+            ..
+            ..
+            public Iterable<CollegeStudent> getGradebook(){
+		    return studentDao.findAll();
+	        }
+        }
+
+
+-------------------------------------------------------------------------------------------------------------
+Spring Boot Unit Testing with Teddy Smith 
+Using Mockito 
+-------------------------------------------------------------------------------------------------------------
 
 
 

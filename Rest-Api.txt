@@ -344,7 +344,7 @@ put/...localhost:8080/{id}
 
 
 
-@RestRepository
+@RestController
 @RequestMapping("/products")
 public class ProductController
 {
@@ -372,13 +372,13 @@ public class ProductService
 	..
 	..
 
-	public Product setProductField(int id, Map<String, Object> fields)
+	public Product updateProductByFields(int id, Map<String, Object> fields)
 	{
 		Optional<Product> existingProduct =  repository.findById(id);
 
 		if(existingProduct.isPresent)
 		{
-			fields.forEach(key,value)->(key,value)
+			fields.forEach(key,value)->
 			{
 				Field field = ReflectionUtils.findField(Product.class,key);
 				field.setAccessible(true);
@@ -487,6 +487,94 @@ public class SurveyService
 		return optionalQuestion.get();
 	}
 
+}
+
+
+------------------------------------------------------------------------
+Step 11: Creating Spring Boot Rest Api to create Survey Question - Post 
+------------------------------------------------------------------------
+Add Survey Question 
+	POST/surveys/{surveyId}/questions 
+
+In SurveyResource.java:-
+@RequestMapping(value="/surveys/{surveyId}/questions",method=RequestMethod.POST)
+public void addNewSurveyQuestion(@PathVariable String surveyId,
+		@RequestBody Question question){
+	surveyService.addNewSurveyQuestion(surveyId,question);
+	
+}
+
+In SurveyService.java:
+public void addNewSurveyQuestion(String surveyId, Question question) {
+		
+	List<Question> questions =  retrieveAllSurveyQuestions(surveyId);
+	questions.add(question);
+}
+
+Now, we will use Rest API client Talent API Tester  (Google extension):-
+POST/surveys/survey1/questions 
+{
+    "id": "Question4",
+    "description": "Your favorite cloud",
+    "options": [
+        "AWS",
+        "Azure",
+        "Google Cloud",
+        "Oracle Cloud"
+    ],
+    "correctAnswer": "Google Cloud"
+}
+
+Two things I don't like here, one is the user is entering Question Id itself and second is Respose status is 200.
+
+
+-----------------------------------------------------------------------
+Step 12: Improving POST method - Status created and location header 
+-----------------------------------------------------------------------
+
+update method addNewSurveyQuestion in SurveyService class:-
+public void addNewSurveyQuestion(String surveyId, Question question) {
+		
+	List<Question> questions =  retrieveAllSurveyQuestions(surveyId);
+	SecureRandom secureRandom = new SecureRandom();
+	String randomId =  new BigInteger(32,secureRandom);
+	question.setId(randomId);
+	questions.add(question);
+}
+
+setId() is not present in Question class. So add that method:-
+public void setId(String id){
+	this.id = id;
+}
+
+We can extrace method by selecting >> Refactor>>Extract Method by select these lines:-
+SecureRandom secureRandom = new SecureRandom();
+String randomId =  new BigInteger(32,secureRandom);
+
+A new method is created:-
+private String generateRandomId() {
+	SecureRandom secureRandom = new SecureRandom();
+	return new BigInteger(32,secureRandom).toString();
+}
+
+And addNewSurveyQuestion() becomes:-
+public void addNewSurveyQuestion(String surveyId, Question question) {
+		
+	List<Question> questions =  retrieveAllSurveyQuestions(surveyId);
+	question.setId(generateRandomId());
+	questions.add(question);
+}
+
+Now, working on httpstatus:-
+--------------------------------------------
+In SurveyResource class:-
+----------------------------
+In addNewSurveyQuestion() method:--
+...
+public ResposeEntity<Object> addNewSurveyQuestion(..., .. ){
+	..
+	..
+	return ResponseEntity.created(null).build();
 }
 
 
