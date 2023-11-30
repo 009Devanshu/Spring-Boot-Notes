@@ -229,3 +229,147 @@ Update your plugin for spring boot 3.1.0
     </configuration>
 
 </plugin>
+
+It will add classes in src/main/java (Wow!!! What a magic.)
+When you see in src/main/java, a new package will be created that is com.in28minutes.courses. Where does it come from? 
+It came from targetNamespace.
+
+When you see in classes, we will see BigInt. If you want to use int, change value in xsd from integer to int.
+
+
+****************************************************************
+Step 8: Configuring an endpoint for GetCourseDetailsRequest
+****************************************************************
+
+packate_name_for_main_class.soap 
+    @Endpoint           (To tell spring that it is an endpoint)
+    public class CourseDetailsEndpoint {
+
+        //method
+        //input - GetCourseDetailsRequest
+        //output -  GetCourseDetailsResponse
+        @PayloadRoot(namespace="http://in28minutes.com/courses",
+			localPart="GetCourseDetailsRequest")
+        public GetCourseDetailsResponse 
+        processCourseDetailsRequest(GetCourseDetailsRequest request) {
+            CourseDetails courseDetails = new CourseDetails();
+            courseDetails.setId(request.getId());
+            courseDetails.setName("Microservices Course");
+            courseDetails.setDescription("That would be a wonderful course!");
+            GetCourseDetailsResponse response = new GetCourseDetailsResponse();
+            response.setCourseDetails(courseDetails);
+
+            return response;
+        }
+    }
+
+We need to tell spring to process this endpoint when the Request (name of the request) GetCourseDetailsRequest comes 
+with namespace http://in28minutes.com/courses
+@PayloadRoot(namespace="http://in28minutes.com/courses",
+			localPart="GetCourseDetailsRequest")
+
+This method would need to take xml (request.xml) and map that to java class GetCourseDetailsRequest. For this--
+In parameter-- processCourseDetailsRequest(@RequestPayload GetCourseDetailsRequest request) 
+
+Similarly, to map response that is of type GetCourseDetailsResponse into xml, we need to annotate our method with 
+@ResponsePayload.
+
+
+**************************************************************************
+Step 9: Spring Web Services Configuration - Message Dispatcher Servlet
+**************************************************************************
+packageNameuntil_main_class.soap
+    //Enable Spring Web Services
+    @EnableWs
+    //Spring Configuration 
+    @Configuration
+    public class WebServiceConfig {
+        @Bean
+        ServletRegistrationBean messageDispatcherServlet(ApplicationContext context) {
+            MessageDispatcherServlet messageDispatcherServlet 
+                = new MessageDispatcherServlet();
+            messageDispatcherServlet.setApplicationContext(context);
+            messageDispatcherServlet.setTransformWsdlLocations(true);
+            return new ServletRegistrationBean(messageDispatcherServlet,"/ws/*");
+        }
+
+    }
+
+
+ServletRegistrationBean helps to map MessageDispatcherServlet with uri.
+
+
+*************************************************************************
+Step 10: Spring Web Services Configuration - Message Dispatcher Servlet
+*************************************************************************
+
+packageNameuntil_main_class.soap
+    //Enable Spring Web Services
+    @EnableWs
+    //Spring Configuration 
+    @Configuration
+    public class WebServiceConfig {
+        @Bean
+        ServletRegistrationBean messageDispatcherServlet(ApplicationContext context) {
+            MessageDispatcherServlet messageDispatcherServlet 
+                = new MessageDispatcherServlet();
+            messageDispatcherServlet.setApplicationContext(context);
+            messageDispatcherServlet.setTransformWsdlLocations(true);
+            return new ServletRegistrationBean(messageDispatcherServlet,"/ws/*");
+        }
+
+        @Bean(name="courses")
+        public DefaultWsdl11Definition defaultWsdl11Definition
+            (XsdSchema coursesSchema) {
+            DefaultWsdl11Definition definition = new DefaultWsdl11Definition();
+            definition.setPortTypeName("CoursePort");
+            definition.setTargetNamespace("http://in28minutes.com/courses");
+            definition.setLocationUri("/ws");
+            definition.setSchema(coursesSchema);
+            return definition;
+        }
+	
+	    @Bean 
+        public XsdSchema coursesSchema() {
+            return new SimpleXsdSchema(new ClassPathResource("course-details.xsd"));
+        }
+
+    }
+
+also add a dependency in pom.xml file: 
+<dependency>
+    <groupId>wsdl4j</groupId>
+    <artifactId>wsdl4j</artifactId>
+</dependency>
+
+***********************************************************
+Step 11: Using Wizdler to execute SOAP requests 
+***********************************************************
+
+Run the application 
+http://localhost:8080/ws/courses.wsdl (In the browser)
+Click on wizdler and provide value 123 and go. You will get the response. 
+
+
+***********************************************************************************
+Step 12: Implementing a service - Course Details Service -  backend with in memo
+***********************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+Theory:-
+---------------
+
+
+
+
+
+
