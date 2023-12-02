@@ -1,0 +1,6 @@
+Commands--
+$ls
+$echo "Test">demo.txt  (Write Test into demo.txt)
+$cat demo.txt 
+Test
+$pwd (Full path to my file)
