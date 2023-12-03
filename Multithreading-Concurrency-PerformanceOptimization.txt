@@ -60,7 +60,7 @@ Context Switch
 4> Start thread 2
 This is context Switch.
 
-Context Switching between threads from different processes is costly. Too many threads causes thrashing (speding more time in management than real productive work). The reason 
+Context Switching between threads from different processes is costly. Too many threads causes thrashing (spending more time in management than real productive work). The reason 
 is that each thread consumes resources in the cpu and memory. When we Switch from one thread to a different thread--
     > Store data for one thread 
     > Restore data for another thread. 
@@ -123,6 +123,18 @@ Thread Creation with java.lang.Runnable
 Thread class capabilities 
 Thread Debugging
 
+In order to create thread, we create thread object--
+Thread t = new Thread();
+Thread object, by default, is empty. So, we need to pass an object of a class that implements Runnable interface. So, 
+Thread thread = new Thread(new Runnable(){
+			public void run() {
+				//Code 
+			}
+		});
+Or 
+Thread thread  = new Thread(()->{
+    //Code 
+});
 
 
 
