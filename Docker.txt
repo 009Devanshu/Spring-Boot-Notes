@@ -268,3 +268,10 @@ Maven Build:-
 In goals
     spring-boot:build-image -DskipTests         (If this is the real project, we should not write -DskipTests ideally)
     
+
+---------------------------------------------------------------------------
+
+*************************************
+Docker Compose
+*************************************
+docker-compose is already installed with docker desktop if you are using windows. 

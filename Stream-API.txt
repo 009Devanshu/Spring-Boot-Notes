@@ -139,12 +139,13 @@ Integer [] nums = {1,5,3,-2,9,12};
 int sum =  Arrays.stream(nums).reduce((a,b)->a+b).get();
 
 int[] nums =  {1,5,3,-2,9,12};
-int sum= Arrays.stream().sum();
+int sum= Arrays.stream(nums).sum();
 stream() will give IntStream().
 
 
 2) list.stream().sorted()...
-   Map<Type of groupingBy,List<CustomClass>>  map=list.stream().sorted(Comparator.reverseOrder())  (If list if of Custom class)
+   Map<Type of groupingBy,List<CustomClass>>  map=list.stream().sorted(Comparator.reverseOrder())
+                    .collect(Collectors.groupingBy(Book::getNumOfPages));  (If list if of Custom class)
    Map<String,List<String>> map= list.stream().collect(Collectors.groupingBy(str->str.substring(0,1))); 
 
 4) Tracing map type object 

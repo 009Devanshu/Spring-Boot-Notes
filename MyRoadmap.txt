@@ -1,0 +1,98 @@
+Always take Official Documentation in a separate browser. Whenever work with springboot, always search 
+spring boot Documentation 
+---------------------------------------------------------------
+Java Roadmap 
+Linux-- Edureka (11 Hours)
+Github-- Push 
+         Fetching and Pulling (Section 12)
+         Github Collaboration 
+IntelliJ-- Amiscode (2 Hours 35 minutes)
+Serialization And I/O -- The Complete Reference (Chapter 13 and Chapter 21), Serialization 
+Optional -- The Complete Reference, Head First Java, Internet
+Dependency Injection in Java - Digital Ocean  
+Design Patterns -- Digital Ocean 
+Lambda Expressions -- The Complete Reference 
+Stream API -- The Complete Reference 
+Testing -- Chad Darby 
+Contract Testing 
+Debugging Skills -- Java Techie, Tom Gregory, IntelliJ Official video (Mala Gupta)
+
+----------------------------------------------------------------------------------
+Relational Database
+Relational Database Design-- Database Design Course (freeCodeCamp.org-- 8 Hours)
+Queries -- Postgresql (Derek Banas -- 3 hours 25 minutes) (Postgresql)
+Indexes -- Hussain Nasser (Postgresql)
+Database Migration Tool -- Flyway (JavaTechie)
+                           Liquibase (SpringDeveloper)
+
+NoSql -- NoSql Database Tutorial (freeCodeCamp.org  2 hours and 54 minutes)
+MongoDB -- MongoDB Complete Course (Thapa Technical  5 hours 20 minutes)
+-----------------------------------------------------------------------------------
+
+Clean Code  
+    SOLID Principles ---(Websites) JRebel,javatpoint, Baeldung
+    N Tier Architecture --(YT Channels) Amiscode, Teddy Smith
+                          (Site) Stackify.com, Baeldung
+    Immutability -- Digital Ocean 
+    String Immutability -- Core Java Jtc Book, Notes 
+
+------------------------------------------------------------------------
+Logging 
+    Log4j--(YT Channel) Ashok IT, Genie Goswami
+    slf4j -- (YT Channel) Think Constructive, Ashok IT (2 Hour video)
+
+-------------------------------------------------------------------------
+Build Tools 
+    Maven -- (YT Channel) Dev Lessons (Maven Full Course (4 Hours 54 minutes))
+    Gradle -- (YT Channel) Ashok IT, KK Tutorials
+    Bazel -- Later 
+-------------------------------------------------------------------------------
+HTTP -- 
+    Rest -- Chad Darby --- You already have 
+    GraphSQL -- (YT Channel) -- Code With Durgesh, Microservices Lab 
+    How HTTP Works --(Site) Khan Academy, Techtarget
+-------------------------------------------------------------------------------
+Framework 
+    Spring Boot  (Spring Documentation)
+
+
+
+*********************************************************************************
+*********************************************************************************
+Microservices Roadmap
+
+Databases
+    SQL- Postgresql
+    NoSql- MongoDB, Cassandra (YT freeCodeCamp)
+
+Cloud Provider - AWS 
+
+Monitoring Tool 
+    Graphana, Prometheus (Both in single video-- Java Techie)
+    Kibana -- Java Techie, Java Tech Solutions
+
+CI/CD 
+    Usint Github Actions -- Java Techie 
+    GitLab -- The Dev World - By Sergio Lema, Anirudh Hossur
+
+Docker -- Retry Ranga
+          Docker Image push, and create registry in hub 
+          Remaining is Docker Compose (Java Techie 2 videos)
+
+Security -- Udemy (You already have)
+
+Message Broker 
+    Kafka (Documentation)
+
+Kubernetes 
+    Ranga Karnam
+
+
+
+Microservices
+    Programming Techie (6 Hours)
+
+
+
+
+
